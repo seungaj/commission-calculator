@@ -3,1504 +3,1110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>법무사 비용 계산기</title>
+<title>법무사 비용 계산기 | 정운영 법무사 사무소</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --navy: #1a2744;
-    --navy-light: #2a3a5c;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --cream: #faf8f3;
-    --gray-light: #f4f2ed;
-    --gray: #8a8580;
-    --text: #2c2820;
-    --border: #ddd8ce;
-    --red: #c0392b;
-    --green: #27ae60;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background: var(--cream);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* Header */
-  header {
-    background: var(--navy);
-    color: white;
-    padding: 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
-  }
-  .header-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-title {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-  .header-title span { color: var(--gold); }
-  .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
-
-  /* Layout */
-  .main-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 24px 32px;
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 24px;
-    align-items: start;
-  }
-
-  /* Panels */
-  .panel {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  }
-  .panel-header {
-    background: var(--navy);
-    color: white;
-    padding: 14px 20px;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .panel-header .icon { color: var(--gold); font-size: 16px; }
-  .panel-body { padding: 20px; }
-
-  /* Tabs */
-  .tab-nav {
-    display: flex;
-    border-bottom: 2px solid var(--border);
-    background: var(--gray-light);
-  }
-  .tab-btn {
-    padding: 12px 20px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    color: var(--gray);
-    font-weight: 400;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -2px;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .tab-btn.active {
-    color: var(--navy);
-    font-weight: 700;
-    border-bottom-color: var(--gold);
-    background: white;
-  }
-  .tab-btn:hover:not(.active) { color: var(--navy); background: white; }
-  .tab-content { display: none; padding: 20px; }
-  .tab-content.active { display: block; }
-
-  /* Form elements */
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  .form-row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-  .form-group { margin-bottom: 12px; }
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--navy);
-    margin-bottom: 5px;
-  }
-  .form-group label .required { color: var(--red); margin-left: 2px; }
-  .form-group label .hint { color: var(--gray); font-weight: 300; font-size: 11px; }
-
-  input[type="text"], input[type="number"], select, textarea {
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    background: white;
-    transition: border-color 0.2s;
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: var(--navy);
-  }
-  input[readonly] { background: var(--gray-light); color: var(--gray); }
-
-  .input-with-unit {
-    position: relative;
-  }
-  .input-with-unit input { padding-right: 36px; }
-  .input-unit {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: var(--gray);
-  }
-
-  /* Radio & Checkbox */
-  .radio-group, .check-group {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    padding: 6px 0;
-  }
-  .radio-group label, .check-group label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 13px;
-    color: var(--text);
-    cursor: pointer;
-    font-weight: 400;
-  }
-  .radio-group input, .check-group input { width: auto; }
-
-  /* Section titles */
-  .section-title {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--navy);
-    padding: 8px 0 6px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  /* Result panel */
-  .result-section { margin-bottom: 16px; }
-  .result-section-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--border);
-  }
-  .result-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 0;
-    font-size: 13px;
-  }
-  .result-item .label { color: var(--text); }
-  .result-item .value {
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-  }
-  .result-item .value.zero { color: var(--gray); }
-  .result-divider { border: none; border-top: 1px dashed var(--border); margin: 8px 0; }
-
-  .subtotal-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 10px;
-    background: var(--gray-light);
-    border-radius: 5px;
-    font-size: 13px;
-    font-weight: 700;
-    margin-top: 8px;
-  }
-  .total-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 14px;
-    background: var(--navy);
-    color: white;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 700;
-    margin-top: 12px;
-  }
-  .total-row .amount { color: var(--gold); font-size: 17px; }
-
-  /* Buttons */
-  .btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: 'Noto Sans KR', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  .btn-primary {
-    background: var(--navy);
-    color: white;
-  }
-  .btn-primary:hover { background: var(--navy-light); }
-  .btn-gold {
-    background: var(--gold);
-    color: white;
-  }
-  .btn-gold:hover { background: var(--gold-light); color: var(--navy); }
-  .btn-outline {
-    background: white;
-    color: var(--navy);
-    border: 1px solid var(--navy);
-  }
-  .btn-outline:hover { background: var(--navy); color: white; }
-  .btn-sm { padding: 6px 12px; font-size: 12px; }
-  .btn-danger { background: var(--red); color: white; }
-
-  .action-bar {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-
-  /* Table */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-  .data-table th {
-    background: var(--navy);
-    color: white;
-    padding: 8px 10px;
-    text-align: left;
-    font-weight: 500;
-  }
-  .data-table td {
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .data-table tr:hover td { background: var(--gray-light); }
-  .data-table td.amount { text-align: right; font-variant-numeric: tabular-nums; }
-
-  /* Info box */
-  .info-box {
-    background: #eef3fb;
-    border: 1px solid #b8cef5;
-    border-radius: 5px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #2c4a7c;
-    margin-bottom: 14px;
-  }
-  .warn-box {
-    background: #fff8e8;
-    border: 1px solid #f0d080;
-    border-radius: 5px;
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #7a5a00;
-    margin-bottom: 14px;
-  }
-
-  /* Loading */
-  .loading { text-align: center; padding: 40px; color: var(--gray); }
-
-  /* Responsive */
-  @media (max-width: 1100px) {
-    .main-container { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 768px) {
-    .main-container { padding: 16px; }
-    .form-row { grid-template-columns: 1fr; }
-    .form-row-3 { grid-template-columns: 1fr; }
-    .header-inner { padding: 12px 16px; }
-  }
-
-  /* Badge */
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
-    font-weight: 500;
-  }
-  .badge-navy { background: var(--navy); color: white; }
-  .badge-gold { background: var(--gold); color: white; }
-
-  /* Collapsible */
-  .collapsible-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    padding: 8px 0;
-    user-select: none;
-  }
-  .collapsible-header:hover { color: var(--navy); }
-  .collapsible-icon { transition: transform 0.2s; }
-  .collapsible-icon.open { transform: rotate(180deg); }
-  .collapsible-body { overflow: hidden; transition: max-height 0.3s; }
+:root{--navy:#1a2744;--navy-l:#2a3a5c;--gold:#c9a84c;--cream:#faf8f3;--gl:#f4f2ed;--gray:#8a8580;--text:#2c2820;--bd:#ddd8ce;--red:#c0392b;--green:#277040}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+header{background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hi{max-width:1400px;margin:0 auto;padding:13px 28px;display:flex;align-items:center;justify-content:space-between}
+.ht{font-family:'Noto Serif KR',serif;font-size:19px;font-weight:600;letter-spacing:1px}
+.ht span{color:var(--gold)}
+.hsub{font-size:11px;color:rgba(255,255,255,.55);margin-top:2px}
+.mc{max-width:1400px;margin:0 auto;padding:20px 28px;display:grid;grid-template-columns:1fr 370px;gap:20px;align-items:start}
+.panel{background:#fff;border-radius:8px;border:1px solid var(--bd);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px}
+.ph{background:var(--navy);color:#fff;padding:11px 18px;font-size:12px;font-weight:600;letter-spacing:.5px;display:flex;align-items:center;gap:7px}
+.ph .ic{color:var(--gold)}
+.pb{padding:16px 18px}
+.tab-nav{display:flex;border-bottom:2px solid var(--bd);background:var(--gl);overflow-x:auto}
+.tb{padding:10px 15px;border:none;background:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--gray);font-weight:400;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap}
+.tb.active{color:var(--navy);font-weight:700;border-bottom-color:var(--gold);background:#fff}
+.tb:hover:not(.active){color:var(--navy);background:rgba(255,255,255,.6)}
+.tc{display:none;padding:16px 18px}
+.tc.active{display:block}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+.fg{margin-bottom:10px}
+.fg label{display:block;font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.fg label .req{color:var(--red)}
+.fg label .ht2{color:var(--gray);font-weight:300;font-size:10px;margin-left:4px}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:5px;font-family:'Noto Sans KR',sans-serif;font-size:12px;color:var(--text);background:#fff;transition:border-color .15s}
+input:focus,select:focus{outline:none;border-color:var(--navy)}
+input[readonly]{background:var(--gl);color:var(--gray)}
+.iw{position:relative}
+.iw input{padding-right:28px}
+.iu{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--gray);pointer-events:none}
+.rg,.cg{display:flex;gap:12px;flex-wrap:wrap;padding:4px 0}
+.rg label,.cg label{display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer}
+.rg input,.cg input{width:auto;margin:0}
+.st{font-size:11px;font-weight:700;color:var(--navy);padding:5px 0 4px;border-bottom:1px solid var(--bd);margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+/* result */
+.rr{display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid #f5f3ee}
+.rr .lb{color:#555}.rr .vl{font-weight:500;font-variant-numeric:tabular-nums;min-width:95px;text-align:right}
+.rr .vl.z{color:#ccc}
+.rs{margin-bottom:10px}.rst{font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--bd)}
+.sub{display:flex;justify-content:space-between;padding:6px 10px;background:var(--gl);border-radius:4px;font-size:12px;font-weight:700;margin-top:5px}
+.gt{display:flex;justify-content:space-between;padding:11px 14px;background:var(--navy);color:#fff;border-radius:6px;font-size:14px;font-weight:700;margin-top:10px}
+.gt .am{color:var(--gold);font-size:16px}
+.btn{padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;transition:all .15s}
+.bn{background:var(--navy);color:#fff}.bn:hover{background:var(--navy-l)}
+.bg{background:var(--gold);color:#fff}.bg:hover{background:#b8943a}
+.bo{background:#fff;color:var(--navy);border:1px solid var(--navy)}.bo:hover{background:var(--navy);color:#fff}
+.bsm{padding:5px 10px;font-size:11px}
+.br{background:var(--red);color:#fff}
+.ab{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.ib{background:#eef3fb;border:1px solid #b8cef5;border-radius:5px;padding:8px 12px;font-size:11px;color:#2c4a7c;margin-bottom:10px;line-height:1.6}
+.wb{background:#fff8e8;border:1px solid #f0d080;border-radius:5px;padding:8px 12px;font-size:11px;color:#7a5a00;margin-bottom:10px}
+.txhl{background:linear-gradient(135deg,#f8f5ef,#fff);border:1px solid var(--bd);border-radius:6px;padding:11px;margin-bottom:10px}
+.txbadge{display:inline-block;background:var(--navy);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.bcard{background:var(--gl);border-radius:6px;padding:11px;font-size:11px;margin-top:6px}
+.bcard .br2{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--bd)}
+.bcard .br2:last-child{border:none;font-weight:700;color:var(--navy)}
+.bcard .bl2{color:var(--gray)}
+.dt{width:100%;border-collapse:collapse;font-size:11px}
+.dt th{background:var(--navy);color:#fff;padding:6px 8px;text-align:left;font-weight:500}
+.dt td{padding:5px 8px;border-bottom:1px solid var(--bd)}
+.dt td.r{text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:1100px){.mc{grid-template-columns:1fr}}
+@media(max-width:768px){.mc{padding:12px}.fr,.fr3{grid-template-columns:1fr}.hi{padding:10px 14px}}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="header-inner">
-    <div>
-      <div class="header-title">⚖️ <span>법무사</span> 비용 계산기</div>
-      <div class="header-sub">2024년 법무사 보수표 기준 · 정운영 법무사 사무소</div>
-    </div>
-    <div style="display:flex;gap:10px;">
-      <button class="btn btn-outline btn-sm" onclick="resetAll()">초기화</button>
-      <button class="btn btn-gold btn-sm" onclick="generateReport()">📄 비용내역서 출력</button>
-    </div>
+<div class="hi">
+  <div>
+    <div class="ht">⚖️ <span>법무사</span> 비용 계산기</div>
+    <div class="hsub">2024년 법무사 보수표 기준 · 정운영 법무사 사무소</div>
   </div>
+  <div style="display:flex;gap:8px">
+    <button class="btn bo bsm" onclick="resetAll()">초기화</button>
+    <button class="btn bg bsm" onclick="generateReport()">📄 비용내역서 출력</button>
+  </div>
+</div>
 </header>
 
-<div class="main-container">
-  <!-- LEFT: Input Panel -->
-  <div>
-    <!-- 기본 정보 -->
-    <div class="panel" style="margin-bottom:20px;">
-      <div class="panel-header"><span class="icon">👤</span> 의뢰인 기본 정보</div>
-      <div class="panel-body">
-        <div class="form-row">
-          <div class="form-group">
-            <label>사건명 <span class="required">*</span></label>
-            <input type="text" id="caseName" placeholder="예: 소유권이전등기(매매)" value="">
-          </div>
-          <div class="form-group">
-            <label>의뢰인</label>
-            <input type="text" id="clientName" placeholder="의뢰인 성명">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>전화번호</label>
-            <input type="text" id="clientPhone" placeholder="010-0000-0000">
-          </div>
-          <div class="form-group">
-            <label>진행담당자</label>
-            <input type="text" id="manager" placeholder="담당 법무사" value="정운영">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>부동산 표시</label>
-          <input type="text" id="propertyDesc" placeholder="예: 서울특별시 강북구 ○○동 ○○○번지 ○동 ○○○호">
-        </div>
+<div class="mc">
+<div>
+<!-- 기본 정보 -->
+<div class="panel">
+<div class="ph"><span class="ic">👤</span> 의뢰인 기본 정보</div>
+<div class="pb">
+  <div class="fr">
+    <div class="fg"><label>사건명 <span class="req">*</span></label><input type="text" id="caseName" placeholder="소유권이전등기(매매)"></div>
+    <div class="fg"><label>의뢰인</label><input type="text" id="clientName" placeholder="의뢰인 성명"></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>전화번호</label><input type="text" id="clientPhone" placeholder="010-0000-0000"></div>
+    <div class="fg"><label>진행담당자</label><input type="text" id="manager" value="정운영"></div>
+  </div>
+  <div class="fg"><label>부동산 표시</label><input type="text" id="propertyDesc" placeholder="서울특별시 강북구 ○○동 ○○○번지"></div>
+</div>
+</div>
+
+<!-- 사건 탭 -->
+<div class="panel">
+<div class="tab-nav">
+  <button class="tb active" onclick="switchTab('re')">🏠 부동산 등기</button>
+  <button class="tb" onclick="switchTab('com')">🏢 상업·법인 등기</button>
+  <button class="tb" onclick="switchTab('lit')">⚖️ 송무·비송·집행</button>
+  <button class="tb" onclick="switchTab('oth')">📋 기타 대행</button>
+</div>
+
+<!-- ===== 부동산 등기 ===== -->
+<div id="tab-re" class="tc active">
+<div class="st">등기 유형</div>
+<div class="fg">
+  <label>등기 종류 <span class="req">*</span></label>
+  <select id="regType" onchange="onRegChange()">
+    <option value="">선택하세요</option>
+    <optgroup label="── 소유권(유상) ──">
+      <option value="매매주택">매매 – 주택 (소유권이전)</option>
+      <option value="매매토지">매매 – 토지/건물 (소유권이전)</option>
+      <option value="법인주택">법인 취득 – 주택 (12%)</option>
+    </optgroup>
+    <optgroup label="── 소유권(무상) ──">
+      <option value="증여주택">증여 – 주택</option>
+      <option value="증여토지">증여 – 토지/건물 (4%)</option>
+      <option value="상속일반">상속 – 일반 (2.8%)</option>
+      <option value="상속농지">상속 – 농지 (2.3%)</option>
+      <option value="원시취득">원시취득 (신축, 2.8%)</option>
+    </optgroup>
+    <optgroup label="── 담보권 ──">
+      <option value="근저당설정">근저당권 설정 (등록면허세 0.2%)</option>
+      <option value="근저당추가">근저당권 추가 설정</option>
+      <option value="근저당말소">근저당권 말소 (보수 80,000원)</option>
+    </optgroup>
+    <optgroup label="── 기타 등기 ──">
+      <option value="주소변경">주소(표시) 변경 (40,000원)</option>
+      <option value="명의변경">등기명의인 표시변경 (40,000원)</option>
+      <option value="말소등기">말소등기 (80,000원)</option>
+      <option value="권리변경">권리변경·경정 (120,000원)</option>
+    </optgroup>
+  </select>
+</div>
+
+<!-- 매매 주택 조건 -->
+<div id="s_hsale" style="display:none">
+  <div class="st">매매 주택 – 취득세 조건</div>
+  <div class="fr">
+    <div class="fg">
+      <label>신규취득 소재지</label>
+      <div class="rg">
+        <label><input type="radio" name="region" value="조정" checked onchange="calcAll()"> 조정대상지역</label>
+        <label><input type="radio" name="region" value="비조정" onchange="calcAll()"> 그 외 지역</label>
       </div>
     </div>
-
-    <!-- 사건 유형별 탭 -->
-    <div class="panel">
-      <div class="tab-nav">
-        <button class="tab-btn active" onclick="switchTab('real-estate')">부동산 등기</button>
-        <button class="tab-btn" onclick="switchTab('commercial')">상업·법인 등기</button>
-        <button class="tab-btn" onclick="switchTab('litigation')">송무·비송·집행</button>
-        <button class="tab-btn" onclick="switchTab('other-fees')">기타 대행</button>
-      </div>
-
-      <!-- 부동산 등기 -->
-      <div id="tab-real-estate" class="tab-content active">
-        <div class="info-box">📌 과세표준액(실거래가 또는 시가표준액)을 입력하시면 법무사 보수가 자동 계산됩니다.</div>
-
-        <div class="section-title">등기 유형</div>
-        <div class="form-group">
-          <label>등기 종류 <span class="required">*</span></label>
-          <select id="regType" onchange="updateRegType()">
-            <option value="">선택하세요</option>
-            <optgroup label="소유권">
-              <option value="transfer_sale_house">매매 - 주택(소유권이전)</option>
-              <option value="transfer_sale_land">매매 - 토지/건물(소유권이전)</option>
-              <option value="gift_house">증여 - 주택</option>
-              <option value="gift_land">증여 - 토지/건물</option>
-              <option value="inheritance">상속</option>
-              <option value="preservation">소유권보존등기</option>
-            </optgroup>
-            <optgroup label="담보권">
-              <option value="mortgage_set">근저당권 설정</option>
-              <option value="mortgage_add">근저당권 추가 설정</option>
-              <option value="mortgage_cancel">근저당권 말소</option>
-            </optgroup>
-            <optgroup label="기타">
-              <option value="address_change">주소(표시)변경</option>
-              <option value="name_change">등기명의인 표시변경</option>
-              <option value="cancel">말소등기</option>
-              <option value="right_change">권리변경·경정</option>
-            </optgroup>
-          </select>
-        </div>
-
-        <div id="tax-area">
-          <div class="section-title">과세 정보</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>과세표준액(매매가) <span class="required">*</span> <span class="hint">취득세 계산 기준</span></label>
-              <div class="input-with-unit">
-                <input type="text" id="taxBase" placeholder="72,724,522" oninput="formatNumber(this); calculateAll()">
-                <span class="input-unit">원</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>주택공시가격 <span class="hint">국민주택채권 계산용</span></label>
-              <div class="input-with-unit">
-                <input type="text" id="publicPrice" placeholder="0" oninput="formatNumber(this); calculateAll()">
-                <span class="input-unit">원</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="house-tax-options" style="display:none">
-          <div class="section-title">취득세율 적용 조건</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>신규취득부동산 소재지</label>
-              <div class="radio-group">
-                <label><input type="radio" name="region" value="조정" checked onchange="calculateAll()"> 조정대상지역</label>
-                <label><input type="radio" name="region" value="비조정" onchange="calculateAll()"> 그 외 지역</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>취득 후 주택 수</label>
-              <select id="houseCount" onchange="calculateAll()">
-                <option value="1">1주택(일시적 2주택)</option>
-                <option value="2">2주택</option>
-                <option value="3">3주택</option>
-                <option value="4">4주택 이상</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>주택 유형</label>
-              <div class="radio-group">
-                <label><input type="radio" name="houseType" value="일반" checked onchange="calculateAll()"> 일반주택</label>
-                <label><input type="radio" name="houseType" value="고급" onchange="calculateAll()"> 별장·고급주택</label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>전용면적 85㎡ 이하 여부 <span class="hint">농특세 면제</span></label>
-              <div class="radio-group">
-                <label><input type="radio" name="area85" value="yes" checked onchange="calculateAll()"> 85㎡ 이하</label>
-                <label><input type="radio" name="area85" value="no" onchange="calculateAll()"> 85㎡ 초과</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="gift-tax-options" style="display:none">
-          <div class="section-title">증여 취득세율 조건</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>증여 부동산 가액</label>
-              <div class="radio-group">
-                <label><input type="radio" name="giftAmt" value="3억이상" checked onchange="calculateAll()"> 3억원 이상</label>
-                <label><input type="radio" name="giftAmt" value="3억미만" onchange="calculateAll()"> 3억원 미만</label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="mortgage-area" style="display:none">
-          <div class="form-group">
-            <label>채권최고액 <span class="required">*</span></label>
-            <div class="input-with-unit">
-              <input type="text" id="mortgageAmt" placeholder="0" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="section-title" style="margin-top:8px;">국민주택채권</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>채권 매입 방식</label>
-            <div class="radio-group">
-              <label><input type="radio" name="bondType" value="즉시매도" checked onchange="calculateAll()"> 즉시매도</label>
-              <label><input type="radio" name="bondType" value="매입보유" onchange="calculateAll()"> 매입보유</label>
-              <label><input type="radio" name="bondType" value="없음" onchange="calculateAll()"> 해당없음</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>채권할인율 <span class="hint">당일 기준</span></label>
-            <div class="input-with-unit">
-              <input type="number" id="bondDiscountRate" value="12.84181" step="0.00001" oninput="calculateAll()">
-              <span class="input-unit">%</span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>채권매입율 <span class="hint">주택공시가격 기준 비율</span></label>
-          <div class="input-with-unit">
-            <input type="number" id="bondBuyRate" value="0" step="0.1" oninput="calculateAll()" placeholder="예: 13.0">
-            <span class="input-unit">‰</span>
-          </div>
-          <div style="font-size:11px;color:var(--gray);margin-top:4px;">주택공시가격 × 채권매입율(‰) = 채권매입금액</div>
-        </div>
-
-        <div class="section-title" style="margin-top:8px;">추가 선택 사항</div>
-        <div class="check-group" style="flex-wrap:wrap;gap:10px 20px;">
-          <label><input type="checkbox" id="chk_confirm" onchange="calculateAll()"> 확인서면 작성 (120,000원)</label>
-          <label><input type="checkbox" id="chk_origin" onchange="calculateAll()" checked> 원인증서 작성 (50,000원)</label>
-          <label><input type="checkbox" id="chk_trade_report" onchange="calculateAll()"> 부동산거래신고 대행 (50,000원)</label>
-          <label><input type="checkbox" id="chk_tax_report" onchange="calculateAll()" checked> 지방세신고 대행 (50,000원)</label>
-          <label><input type="checkbox" id="chk_bond_agent" onchange="calculateAll()" checked> 채권매입 대행 (40,000원)</label>
-          <label><input type="checkbox" id="chk_permit" onchange="calculateAll()"> 허가·승낙서류 작성 (50,000원)</label>
-          <label><input type="checkbox" id="chk_other" onchange="calculateAll()"> 기타업무 대행 (40,000원)</label>
-        </div>
-
-        <div class="section-title" style="margin-top:14px;">교통비 및 일당</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>교통비</label>
-            <div class="input-with-unit">
-              <input type="text" id="travelCost" value="80,000" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>일당</label>
-            <select id="dailyAllowance" onchange="calculateAll()">
-              <option value="0">없음</option>
-              <option value="80000" selected>80,000원 (4시간 이내)</option>
-              <option value="160000">160,000원 (4시간 초과)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="section-title" style="margin-top:8px;">등기신청수수료</div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>등기신청수수료</label>
-            <div class="input-with-unit">
-              <input type="text" id="regFee" value="36,000" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>등본 등 제증명</label>
-            <div class="input-with-unit">
-              <input type="text" id="certFee" value="20,000" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 상업·법인 등기 -->
-      <div id="tab-commercial" class="tab-content">
-        <div class="info-box">📌 회사 설립, 자본 변경, 임원 변경 등 상업·법인 등기 보수를 계산합니다.</div>
-        <div class="form-group">
-          <label>등기 종류</label>
-          <select id="commercialType" onchange="calculateAll()">
-            <option value="">선택하세요</option>
-            <option value="establish">회사/법인 설립</option>
-            <option value="capital_change">자본(자산) 증감</option>
-            <option value="officer_change">임원 선임·변경 (100,000원)</option>
-            <option value="address_change_com">본점(주사무소) 이전 (120,000원)</option>
-            <option value="branch_open">지점(분사무소) 설치 (120,000원)</option>
-            <option value="dissolve">해산·청산·계속 (120,000원)</option>
-            <option value="merge_no_capital">자본증가 없는 합병 (180,000원)</option>
-            <option value="foreign_company">외국회사 영업소 설치 (280,000원)</option>
-          </select>
-        </div>
-        <div id="commercial-amount-area">
-          <div class="form-group">
-            <label>납입(출자)금액 또는 감소 자본가액</label>
-            <div class="input-with-unit">
-              <input type="text" id="commercialAmt" placeholder="0" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 송무·비송·집행 -->
-      <div id="tab-litigation" class="tab-content">
-        <div class="info-box">📌 법원·검찰청 등에 제출하는 각종 서류 작성 보수를 계산합니다.</div>
-        <div class="form-group">
-          <label>서류 종류</label>
-          <select id="litigationType" onchange="calculateAll()">
-            <option value="">선택하세요</option>
-            <optgroup label="문안 필요 서류 (기본 보수)">
-              <option value="lawsuit_A">소장·항고장·답변서·준비서면 등 (유형A)</option>
-              <option value="lawsuit_B">공시최고·소송비용확정신청서 등 (유형B)</option>
-            </optgroup>
-            <optgroup label="문안 불필요 서류">
-              <option value="simple_doc">기일변경·판결확정·집행문부여 등 (40,000원)</option>
-            </optgroup>
-          </select>
-        </div>
-        <div id="litigation-amount-area">
-          <div class="form-group">
-            <label>소송물가액 <span class="hint">없거나 산정불가 시 5천만원으로 간주</span></label>
-            <div class="input-with-unit">
-              <input type="text" id="litigationAmt" placeholder="50,000,000" oninput="formatNumber(this); calculateAll()">
-              <span class="input-unit">원</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 기타 대행 -->
-      <div id="tab-other-fees" class="tab-content">
-        <div class="info-box">📌 기타 대행 업무 및 상담 비용을 추가할 수 있습니다.</div>
-        <div class="section-title">기타 대행 업무</div>
-        <table class="data-table" style="margin-bottom:16px;">
-          <thead>
-            <tr>
-              <th>항목</th>
-              <th>단가</th>
-              <th>수량</th>
-              <th>금액</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="other-items">
-          </tbody>
-        </table>
-        <div class="form-row">
-          <div class="form-group">
-            <label>항목 추가</label>
-            <select id="addItemType">
-              <option value="consult_single">개별 상담·자문 (150,000원)</option>
-              <option value="consult_monthly">계속 상담·자문 월액 (600,000원)</option>
-              <option value="contract_write">계약서 등 문서 작성 (80,000원)</option>
-              <option value="notarize">공증 대행 (50,000원)</option>
-              <option value="corp_seal">법인인감카드 발급 대행 (40,000원)</option>
-              <option value="submit_court">법원 서류 제출 대행 (40,000원)</option>
-              <option value="custom">직접 입력</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>금액 (직접입력 시)</label>
-            <input type="text" id="customItemAmt" placeholder="0" oninput="formatNumber(this)">
-          </div>
-        </div>
-        <div class="form-group">
-          <label>항목명 (직접입력 시)</label>
-          <input type="text" id="customItemName" placeholder="항목명 입력">
-        </div>
-        <button class="btn btn-primary btn-sm" onclick="addOtherItem()">+ 항목 추가</button>
+    <div class="fg">
+      <label>1세대 종소주택수 (신규 포함)</label>
+      <select id="houseCount" onchange="calcAll()">
+        <option value="1">1주택 (일시적 2주택)</option>
+        <option value="2">2주택</option>
+        <option value="3">3주택</option>
+        <option value="4">4주택 이상</option>
+      </select>
+    </div>
+  </div>
+  <div class="fr">
+    <div class="fg">
+      <label>주택 유형</label>
+      <div class="rg">
+        <label><input type="radio" name="htype" value="일반" checked onchange="calcAll()"> 일반주택</label>
+        <label><input type="radio" name="htype" value="고급" onchange="calcAll()"> 별장·고급주택 (+8%)</label>
       </div>
     </div>
-
-    <!-- 가산보수 -->
-    <div class="panel" style="margin-top:20px;">
-      <div class="panel-header"><span class="icon">➕</span> 가산보수</div>
-      <div class="panel-body">
-        <div class="form-row">
-          <div class="form-group">
-            <label>가산보수 유형</label>
-            <select id="addlFeeType" onchange="calculateAll()">
-              <option value="none">없음</option>
-              <option value="special_100">특별사건 가산 (100%까지)</option>
-              <option value="multiple_50">다수관할 가산 (50%까지)</option>
-              <option value="custom_pct">직접 입력 (%)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>가산율 <span class="hint">% 직접입력</span></label>
-            <div class="input-with-unit">
-              <input type="number" id="addlFeeRate" value="0" min="0" max="100" oninput="calculateAll()">
-              <span class="input-unit">%</span>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>가산보수 직접 입력 <span class="hint">위 계산과 별도로 추가</span></label>
-          <div class="input-with-unit">
-            <input type="text" id="addlFeeFixed" value="20,000" oninput="formatNumber(this); calculateAll()">
-            <span class="input-unit">원</span>
-          </div>
-        </div>
+    <div class="fg">
+      <label>전용면적 85㎡ 이하</label>
+      <div class="rg">
+        <label><input type="radio" name="area85" value="yes" checked onchange="calcAll()"> 85㎡ 이하 (농특세 면제)</label>
+        <label><input type="radio" name="area85" value="no" onchange="calcAll()"> 85㎡ 초과</label>
       </div>
     </div>
   </div>
-
-  <!-- RIGHT: Result Panel -->
-  <div style="position:sticky;top:80px;">
-    <div class="panel">
-      <div class="panel-header"><span class="icon">💰</span> 비용 내역</div>
-      <div class="panel-body">
-        <div class="result-section">
-          <div class="result-section-title">공과금</div>
-          <div class="result-item"><span class="label">취득세</span><span class="value" id="r-acq-tax">0원</span></div>
-          <div class="result-item"><span class="label">교육세</span><span class="value" id="r-edu-tax">0원</span></div>
-          <div class="result-item"><span class="label">농어촌특별세</span><span class="value" id="r-agri-tax">0원</span></div>
-          <div class="result-item"><span class="label">등기신청수수료</span><span class="value" id="r-reg-fee">0원</span></div>
-          <div class="result-item"><span class="label">인지</span><span class="value" id="r-stamp">0원</span></div>
-          <div class="result-item"><span class="label">국민주택채권 매입</span><span class="value" id="r-bond-buy">0원</span></div>
-          <div class="result-item"><span class="label">채권 할인 비용</span><span class="value" id="r-bond-discount">0원</span></div>
-          <div class="result-item"><span class="label">등본 등 제증명</span><span class="value" id="r-cert">0원</span></div>
-          <div class="subtotal-row"><span>공과금 소계 ①</span><span id="r-gov-total">0원</span></div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">법무사 보수</div>
-          <div class="result-item"><span class="label">기본보수</span><span class="value" id="r-base-fee">0원</span></div>
-          <div class="result-item"><span class="label">가산보수</span><span class="value" id="r-addl-fee">0원</span></div>
-          <div class="result-item"><span class="label">확인서면</span><span class="value" id="r-confirm">0원</span></div>
-          <div class="result-item"><span class="label">원인증서 작성</span><span class="value" id="r-origin">0원</span></div>
-          <div class="result-item"><span class="label">검인/부동산거래신고</span><span class="value" id="r-trade-report">0원</span></div>
-          <div class="result-item"><span class="label">지방세신고 대행</span><span class="value" id="r-tax-report">0원</span></div>
-          <div class="result-item"><span class="label">채권매입 대행</span><span class="value" id="r-bond-agent">0원</span></div>
-          <div class="result-item"><span class="label">허가·승낙서류 작성</span><span class="value" id="r-permit">0원</span></div>
-          <div class="result-item"><span class="label">기타업무 대행</span><span class="value" id="r-other">0원</span></div>
-          <div class="result-item"><span class="label">교통비</span><span class="value" id="r-travel">0원</span></div>
-          <div class="result-item"><span class="label">일당</span><span class="value" id="r-daily">0원</span></div>
-          <div id="r-other-items-list"></div>
-          <div class="subtotal-row"><span>보수액 소계 ②</span><span id="r-fee-total">0원</span></div>
-        </div>
-
-        <div class="result-section">
-          <div class="result-section-title">부가가치세</div>
-          <div class="result-item"><span class="label">부가가치세 (보수의 10%)</span><span class="value" id="r-vat">0원</span></div>
-          <div class="subtotal-row"><span>부가가치세 ③</span><span id="r-vat-total">0원</span></div>
-        </div>
-
-        <div class="total-row">
-          <span>합계 (①+②+③)</span>
-          <span class="amount" id="r-grand-total">0원</span>
-        </div>
-
-        <div style="margin-top:14px;padding:10px;background:var(--gray-light);border-radius:5px;">
-          <div style="font-size:11px;color:var(--gray);margin-bottom:6px;">입금 계좌</div>
-          <div style="font-size:13px;font-weight:600;color:var(--navy)">신한 110-571-241539</div>
-          <div style="font-size:12px;color:var(--gray)">예금주: 정운영</div>
-        </div>
-
-        <div class="action-bar">
-          <button class="btn btn-gold" onclick="generateReport()" style="flex:1">📄 비용내역서 출력</button>
-          <button class="btn btn-outline btn-sm" onclick="copyToClipboard()">복사</button>
-        </div>
-      </div>
+  <div class="fg">
+    <label>중과세 제외 주택 여부</label>
+    <div class="rg">
+      <label><input type="radio" name="taxexempt" value="no" checked onchange="calcAll()"> 해당 없음</label>
+      <label><input type="radio" name="taxexempt" value="yes" onchange="calcAll()"> 중과세 제외 주택 (1주택 세율 적용)</label>
     </div>
+  </div>
+  <div class="fg">
+    <label>취득세 감면</label>
+    <select id="exemptType" onchange="calcAll()">
+      <option value="">없음</option>
+      <option value="생애최초">생애최초 주택 구입 감면 (본세 최대 200만원 한도)</option>
+    </select>
+  </div>
+  <!-- 세율 안내 박스 -->
+  <div id="ratebox" class="txhl" style="display:none">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <span style="font-size:11px;font-weight:600;color:var(--navy)">적용 세율</span>
+      <span id="ratebadge" class="txbadge">–</span>
+    </div>
+    <div id="ratedesc" style="font-size:11px;color:var(--gray);line-height:1.9"></div>
+  </div>
+</div>
 
-    <!-- 채권 계산 보조 -->
-    <div class="panel" style="margin-top:16px;">
-      <div class="panel-header"><span class="icon">📊</span> 채권 계산 참고</div>
-      <div class="panel-body" style="font-size:12px;">
-        <div id="bond-calc-detail" style="color:var(--gray)">과세표준액과 주택공시가격을 입력하면 채권 정보가 표시됩니다.</div>
+<!-- 증여 주택 조건 -->
+<div id="s_gift" style="display:none">
+  <div class="st">증여 주택 – 취득세율</div>
+  <div class="fg">
+    <label>조정대상지역 여부 및 가액</label>
+    <div class="rg" style="flex-direction:column;gap:6px">
+      <label><input type="radio" name="gifttype" value="조정3억이상" checked onchange="calcAll()"> 조정대상지역 · 3억원 이상 → 취득세 12%</label>
+      <label><input type="radio" name="gifttype" value="조정3억미만" onchange="calcAll()"> 조정대상지역 · 3억원 미만 → 취득세 3.5%</label>
+      <label><input type="radio" name="gifttype" value="비조정" onchange="calcAll()"> 그 외 지역 → 취득세 3.5%</label>
+    </div>
+  </div>
+</div>
+
+<!-- 상속 안내 -->
+<div id="s_inherit" style="display:none">
+  <div id="inheritdesc" class="ib"></div>
+</div>
+
+<!-- 과세표준액 -->
+<div id="s_taxbase">
+  <div class="st">과세 표준액</div>
+  <div class="fr">
+    <div class="fg">
+      <label>과세표준액(매매가/신고가) <span class="req">*</span></label>
+      <div class="iw"><input type="text" id="taxBase" placeholder="72,724,522" oninput="onTaxBaseInput(this)"><span class="iu">원</span></div>
+    </div>
+    <div class="fg">
+      <label>인지세 <span class="ht2">1억 이하 면제, 자동계산</span></label>
+      <div class="iw"><input type="text" id="stampTax" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 근저당 -->
+<div id="s_mort" style="display:none">
+  <div class="st">근저당 – 채권최고액</div>
+  <div class="fr">
+    <div class="fg">
+      <label>채권최고액 <span class="req">*</span></label>
+      <div class="iw"><input type="text" id="mortAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
+    </div>
+    <div class="fg">
+      <label>등록면허세 감면 여부</label>
+      <div class="rg">
+        <label><input type="radio" name="mortdisc" value="no" checked onchange="calcAll()"> 없음 (세율 0.2%)</label>
+        <label><input type="radio" name="mortdisc" value="yes" onchange="calcAll()"> 50% 감면 (세율 0.1%)</label>
       </div>
     </div>
   </div>
 </div>
+
+<!-- ===== 국민주택채권 ===== -->
+<div id="s_bond">
+  <div class="st">국민주택채권 매입</div>
+  <div class="fr">
+    <div class="fg">
+      <label>부동산 종류 (채권매입율 기준)</label>
+      <select id="bondCat" onchange="onBondCatChange()">
+        <option value="주택">주택</option>
+        <option value="토지">토지</option>
+        <option value="기타">기타 부동산 (근린생활 등)</option>
+        <option value="없음">해당 없음</option>
+      </select>
+    </div>
+    <div class="fg">
+      <label>소재지 구분</label>
+      <select id="bondRegion" onchange="calcAll()">
+        <option value="특광">특별시 및 광역시</option>
+        <option value="기타">그 밖의 지역</option>
+      </select>
+    </div>
+  </div>
+  <div id="s_bondprice">
+    <div class="fr">
+      <div class="fg">
+        <label>시가표준액 (주택공시가격) <span class="req">*</span></label>
+        <div class="iw"><input type="text" id="pubPrice" placeholder="24,412" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
+      </div>
+      <div class="fg">
+        <label>자동 산출 채권매입율</label>
+        <div class="iw"><input type="text" id="bondRateDisp" readonly placeholder="–"><span class="iu">‰</span></div>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label>채권매입금액 (자동계산)</label>
+        <div class="iw"><input type="text" id="bondBuyDisp" readonly placeholder="0"><span class="iu">원</span></div>
+      </div>
+      <div class="fg">
+        <label>채권 처리 방식</label>
+        <div class="rg">
+          <label><input type="radio" name="bondtype" value="즉시매도" checked onchange="calcAll()"> 즉시매도</label>
+          <label><input type="radio" name="bondtype" value="매입보유" onchange="calcAll()"> 매입보유</label>
+        </div>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label>채권할인율 <span class="ht2">오늘 기준</span></label>
+        <div class="iw"><input type="number" id="bondDiscRate" value="12.84181" step="0.00001" oninput="calcAll()"><span class="iu">%</span></div>
+      </div>
+      <div class="fg">
+        <label>즉시매도 할인비용 (자동계산)</label>
+        <div class="iw"><input type="text" id="bondDiscDisp" readonly placeholder="0"><span class="iu">원</span></div>
+      </div>
+    </div>
+    <div id="bondDetailCard" class="bcard" style="display:none"></div>
+  </div>
+</div>
+
+<!-- 대행 서비스 -->
+<div class="st" style="margin-top:8px">대행 서비스 선택</div>
+<div class="cg" style="gap:7px 16px">
+  <label><input type="checkbox" id="chk_confirm" onchange="calcAll()"> 확인서면 (120,000원)</label>
+  <label><input type="checkbox" id="chk_origin" checked onchange="calcAll()"> 원인증서 작성 (50,000원)</label>
+  <label><input type="checkbox" id="chk_trade" onchange="calcAll()"> 부동산거래신고 (50,000원)</label>
+  <label><input type="checkbox" id="chk_taxrpt" checked onchange="calcAll()"> 지방세신고 대행 (50,000원)</label>
+  <label><input type="checkbox" id="chk_bondagt" checked onchange="calcAll()"> 채권매입 대행 (40,000원)</label>
+  <label><input type="checkbox" id="chk_permit" onchange="calcAll()"> 허가·승낙서류 (50,000원)</label>
+  <label><input type="checkbox" id="chk_otherdeed" onchange="calcAll()"> 기타업무 대행 (40,000원)</label>
+</div>
+
+<!-- 실비 -->
+<div class="st" style="margin-top:12px">실비 및 등기비용</div>
+<div class="fr3">
+  <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel" value="80,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>일당</label>
+    <select id="daily" onchange="calcAll()">
+      <option value="0">없음</option>
+      <option value="80000" selected>80,000원 (4시간 이내)</option>
+      <option value="160000">160,000원 (4시간 초과)</option>
+    </select>
+  </div>
+  <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee" value="36,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+</div>
+<div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+</div><!-- end tab-re -->
+
+<!-- ===== 상업·법인 등기 ===== -->
+<div id="tab-com" class="tc">
+  <div class="ib">📌 회사 설립·자본변경·임원변경 등 상업·법인 등기 보수를 계산합니다.</div>
+  <div class="fr">
+    <div class="fg"><label>등기 종류</label>
+      <select id="comType" onchange="calcAll()">
+        <option value="">선택하세요</option>
+        <option value="설립">회사/법인 설립</option>
+        <option value="자본변경">자본(자산) 증감</option>
+        <option value="임원변경">임원 선임·변경 (100,000원)</option>
+        <option value="본점이전">본점 이전 (120,000원)</option>
+        <option value="지점설치">지점 설치·이전 (120,000원)</option>
+        <option value="해산청산">해산·청산·계속 (120,000원)</option>
+        <option value="합병무증자">자본증가 없는 합병 (180,000원)</option>
+        <option value="외국영업소">외국회사 영업소 설치 (280,000원)</option>
+      </select>
+    </div>
+    <div class="fg"><label>납입(출자)금액</label><div class="iw"><input type="text" id="comAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee_com" value="36,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_com" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+</div>
+
+<!-- ===== 송무·비송 ===== -->
+<div id="tab-lit" class="tc">
+  <div class="ib">📌 소송물가액 없거나 산정불가 시 5천만원으로 간주합니다.</div>
+  <div class="fr">
+    <div class="fg"><label>서류 종류</label>
+      <select id="litType" onchange="calcAll()">
+        <option value="">선택하세요</option>
+        <option value="A">소장·항고장·답변서·준비서면 등 (유형 A)</option>
+        <option value="B">공시최고·소송비용확정신청서 등 (유형 B)</option>
+        <option value="simple">기일변경·판결확정·집행문부여 등 (40,000원)</option>
+      </select>
+    </div>
+    <div class="fg"><label>소송물가액</label><div class="iw"><input type="text" id="litAmt" placeholder="50,000,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+</div>
+
+<!-- ===== 기타 대행 ===== -->
+<div id="tab-oth" class="tc">
+  <div class="ib">📌 기타 대행 업무 항목을 자유롭게 추가하세요.</div>
+  <table class="dt" style="margin-bottom:12px">
+    <thead><tr><th>항목명</th><th style="text-align:right">금액</th><th></th></tr></thead>
+    <tbody id="otherBody"></tbody>
+  </table>
+  <div class="fr">
+    <div class="fg"><label>항목 선택</label>
+      <select id="addType" onchange="onAddTypeChange()">
+        <option value="상담개별">개별 상담·자문 (150,000원)</option>
+        <option value="상담계속">계속 상담·자문 월액 (600,000원)</option>
+        <option value="계약서작성">계약서 등 문서 작성 (80,000원)</option>
+        <option value="공증">공증 대행 (50,000원)</option>
+        <option value="법인인감카드">법인인감카드 발급 대행 (40,000원)</option>
+        <option value="법원제출">법원 서류 제출 대행 (40,000원)</option>
+        <option value="custom">직접 입력</option>
+      </select>
+    </div>
+    <div class="fg" id="custAmtGrp" style="display:none"><label>직접 입력 금액</label><div class="iw"><input type="text" id="custAmt" placeholder="0" oninput="fmtN(this)"><span class="iu">원</span></div></div>
+  </div>
+  <div class="fg" id="custNameGrp" style="display:none"><label>항목명</label><input type="text" id="custName" placeholder="항목명 입력"></div>
+  <button class="btn bn bsm" onclick="addItem()">+ 항목 추가</button>
+</div>
+</div><!-- end panel -->
+
+<!-- 가산보수 -->
+<div class="panel">
+<div class="ph"><span class="ic">➕</span> 가산보수</div>
+<div class="pb">
+  <div class="fr">
+    <div class="fg"><label>가산 유형</label>
+      <select id="addlType" onchange="calcAll()">
+        <option value="none">없음</option>
+        <option value="pct">비율 가산 (%)</option>
+      </select>
+    </div>
+    <div class="fg"><label>가산율 <span class="ht2">기본보수 대비 %</span></label><div class="iw"><input type="number" id="addlRate" value="0" min="0" max="100" oninput="calcAll()"><span class="iu">%</span></div></div>
+  </div>
+  <div class="fg"><label>고정 가산보수 <span class="ht2">비율 계산과 별도 추가</span></label><div class="iw"><input type="text" id="addlFixed" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+</div>
+</div>
+</div><!-- left col end -->
+
+<!-- ===== 결과 패널 ===== -->
+<div style="position:sticky;top:68px">
+<div class="panel">
+<div class="ph"><span class="ic">💰</span> 비용 내역 (실시간)</div>
+<div class="pb">
+  <div class="rs">
+    <div class="rst">공과금</div>
+    <div class="rr"><span class="lb">취득세 / 등록면허세</span><span class="vl" id="R_acq">0원</span></div>
+    <div class="rr"><span class="lb">농어촌특별세</span><span class="vl" id="R_agri">0원</span></div>
+    <div class="rr"><span class="lb">지방교육세</span><span class="vl" id="R_edu">0원</span></div>
+    <div class="rr"><span class="lb" style="color:var(--green)">취득세 감면</span><span class="vl" id="R_exempt" style="color:var(--green)">–</span></div>
+    <div class="rr"><span class="lb">등기신청수수료</span><span class="vl" id="R_reg">0원</span></div>
+    <div class="rr"><span class="lb">인지세</span><span class="vl" id="R_stamp">0원</span></div>
+    <div class="rr"><span class="lb">국민주택채권 매입</span><span class="vl" id="R_bondbuy">0원</span></div>
+    <div class="rr"><span class="lb" style="color:var(--green)">└ 즉시매도 할인비용</span><span class="vl" id="R_bonddisc" style="color:var(--green)">–</span></div>
+    <div class="rr"><span class="lb">등본 등 제증명</span><span class="vl" id="R_cert">0원</span></div>
+    <div class="sub"><span>공과금 소계 ①</span><span id="R_govtotal">0원</span></div>
+  </div>
+  <div class="rs">
+    <div class="rst">법무사 보수</div>
+    <div class="rr"><span class="lb">기본보수</span><span class="vl" id="R_base">0원</span></div>
+    <div class="rr"><span class="lb">가산보수</span><span class="vl" id="R_addl">0원</span></div>
+    <div class="rr"><span class="lb">확인서면</span><span class="vl" id="R_confirm">0원</span></div>
+    <div class="rr"><span class="lb">원인증서 작성</span><span class="vl" id="R_origin">0원</span></div>
+    <div class="rr"><span class="lb">검인/부동산거래신고</span><span class="vl" id="R_trade">0원</span></div>
+    <div class="rr"><span class="lb">지방세신고 대행</span><span class="vl" id="R_taxrpt">0원</span></div>
+    <div class="rr"><span class="lb">채권매입 대행</span><span class="vl" id="R_bondagt">0원</span></div>
+    <div class="rr"><span class="lb">허가·승낙서류</span><span class="vl" id="R_permit">0원</span></div>
+    <div class="rr"><span class="lb">기타업무 대행</span><span class="vl" id="R_otherdeed">0원</span></div>
+    <div class="rr"><span class="lb">교통비</span><span class="vl" id="R_travel">0원</span></div>
+    <div class="rr"><span class="lb">일당</span><span class="vl" id="R_daily">0원</span></div>
+    <div id="R_otherlist"></div>
+    <div class="sub"><span>보수액 소계 ②</span><span id="R_feetotal">0원</span></div>
+  </div>
+  <div class="rs">
+    <div class="rst">부가가치세</div>
+    <div class="rr"><span class="lb">부가가치세 (보수의 10%)</span><span class="vl" id="R_vat">0원</span></div>
+    <div class="sub"><span>부가가치세 ③</span><span id="R_vattotal">0원</span></div>
+  </div>
+  <div class="gt"><span>합계 (①+②+③)</span><span class="am" id="R_grand">0원</span></div>
+  <div style="margin-top:10px;padding:9px 12px;background:var(--gl);border-radius:5px">
+    <div style="font-size:10px;color:var(--gray);margin-bottom:3px">입금 계좌</div>
+    <div style="font-size:13px;font-weight:700;color:var(--navy)">신한 110-571-241539</div>
+    <div style="font-size:11px;color:var(--gray)">예금주: 정운영</div>
+  </div>
+  <div class="ab">
+    <button class="btn bg" onclick="generateReport()" style="flex:1">📄 비용내역서 출력</button>
+    <button class="btn bo bsm" onclick="copyResult()">복사</button>
+  </div>
+</div>
+</div>
+
+<!-- 채권매입율 참고표 -->
+<div class="panel">
+<div class="ph"><span class="ic">📊</span> 국민주택채권 매입율 참고표</div>
+<div class="pb" style="padding:12px">
+  <div id="bondRefArea" style="font-size:11px;color:var(--gray)">등기 유형과 소재지를 선택하면 표시됩니다.</div>
+</div>
+</div>
+</div><!-- right col -->
+</div><!-- mc -->
 
 <script>
-// ==================== UTILITY ====================
-function formatNumber(input) {
-  let val = input.value.replace(/[^0-9]/g, '');
-  if (val === '') { input.value = ''; return; }
-  input.value = parseInt(val).toLocaleString('ko-KR');
-}
-
-function parseNum(id) {
-  const el = document.getElementById(id);
-  if (!el) return 0;
-  return parseInt(el.value.replace(/[^0-9]/g, '')) || 0;
-}
-
-function parseNumDirect(val) {
-  return parseInt(String(val).replace(/[^0-9]/g, '')) || 0;
-}
-
-function fmt(n) {
-  return Math.round(n).toLocaleString('ko-KR') + '원';
-}
-
-function setResult(id, val) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = fmt(val);
-  el.className = 'value' + (val === 0 ? ' zero' : '');
-}
-
-// ==================== TAB SWITCHING ====================
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  
-  const tabEl = document.getElementById('tab-' + tab);
-  const btnIdx = ['real-estate','commercial','litigation','other-fees'].indexOf(tab);
-  document.querySelectorAll('.tab-btn')[btnIdx].classList.add('active');
-  if (tabEl) tabEl.classList.add('active');
-  calculateAll();
-}
-
-// ==================== REG TYPE CHANGE ====================
-function updateRegType() {
-  const type = document.getElementById('regType').value;
-  const taxArea = document.getElementById('tax-area');
-  const houseOpts = document.getElementById('house-tax-options');
-  const giftOpts = document.getElementById('gift-tax-options');
-  const mortgageArea = document.getElementById('mortgage-area');
-
-  // Reset
-  houseOpts.style.display = 'none';
-  giftOpts.style.display = 'none';
-  mortgageArea.style.display = 'none';
-  taxArea.style.display = 'block';
-
-  if (['transfer_sale_house'].includes(type)) {
-    houseOpts.style.display = 'block';
-  } else if (['gift_house'].includes(type)) {
-    giftOpts.style.display = 'block';
-  } else if (['mortgage_set', 'mortgage_add'].includes(type)) {
-    taxArea.style.display = 'none';
-    mortgageArea.style.display = 'block';
-  } else if (['mortgage_cancel','address_change','name_change','cancel','right_change'].includes(type)) {
-    taxArea.style.display = 'none';
+// =====================================================
+// 국민주택채권 매입율표 (취등록세_채권_자동계산.xlsx 기반)
+// 시가표준액 기준 구간별 매입율
+// =====================================================
+const BOND_RATES = {
+  주택: {
+    특광: [
+      {min:10000000, max:50000000,  rate:0.018},  // 1천만~5천만: 1.8‰
+      {min:50000000, max:150000000, rate:0.028},  // 5천만~1억5천만: 2.8‰
+      {min:150000000,max:Infinity,  rate:0.042},  // 1억5천만↑: 4.2‰
+    ],
+    기타: [
+      {min:10000000, max:50000000,  rate:0.014},
+      {min:50000000, max:150000000, rate:0.025},
+      {min:150000000,max:Infinity,  rate:0.039},
+    ]
+  },
+  토지: {
+    특광: [
+      {min:5000000,  max:50000000,  rate:0.025},
+      {min:50000000, max:100000000, rate:0.04},
+      {min:100000000,max:Infinity,  rate:0.05},
+    ],
+    기타: [
+      {min:5000000,  max:50000000,  rate:0.02},
+      {min:50000000, max:100000000, rate:0.035},
+      {min:100000000,max:Infinity,  rate:0.045},
+    ]
+  },
+  기타: { // 근린생활 등
+    특광: [
+      {min:10000000, max:50000000,  rate:0.01},
+      {min:50000000, max:150000000, rate:0.016},
+      {min:150000000,max:Infinity,  rate:0.02},
+    ],
+    기타: [
+      {min:10000000, max:50000000,  rate:0.008},
+      {min:50000000, max:150000000, rate:0.014},
+      {min:150000000,max:Infinity,  rate:0.018},
+    ]
   }
-  calculateAll();
+};
+
+function getBondRate(cat, region, price) {
+  const tbl = BOND_RATES[cat]?.[region];
+  if (!tbl || price <= 0) return 0;
+  for (const r of tbl) if (price >= r.min && price < r.max) return r.rate;
+  return tbl[tbl.length-1].rate;
 }
 
-// ==================== TAKUTEUKSE CALCULATION ====================
-function calcAcquisitionTax(amount, type) {
-  if (amount <= 0) return {acq:0, edu:0, agri:0};
-  
-  const isHouseSale = type === 'transfer_sale_house';
-  const isGiftHouse = type === 'gift_house';
-  const isGiftLand = type === 'gift_land';
-  const isLand = ['transfer_sale_land','gift_land','inheritance','preservation'].includes(type);
-  
-  let acqRate = 0, eduRate = 0, agriRate = 0;
-  
-  if (isHouseSale) {
-    const region = document.querySelector('input[name="region"]:checked')?.value || '조정';
-    const houseCount = parseInt(document.getElementById('houseCount').value);
-    const houseType = document.querySelector('input[name="houseType"]:checked')?.value || '일반';
-    const area85 = document.querySelector('input[name="area85"]:checked')?.value || 'yes';
-    const isAdjusted = region === '조정';
+function renderBondRef(cat, region) {
+  const el = document.getElementById('bondRefArea');
+  if (cat === '없음') { el.innerHTML = '<span style="color:var(--gray)">해당 없음</span>'; return; }
+  const tbl = BOND_RATES[cat]?.[region];
+  if (!tbl) { el.innerHTML = ''; return; }
+  const rl = region === '특광' ? '특별시·광역시' : '그 밖의 지역';
+  const rows = tbl.map(r => {
+    const lo = r.min >= 1e8 ? r.min/1e8+'억' : r.min/1e4+'만';
+    const hi = r.max === Infinity ? '이상' : (r.max >= 1e8 ? r.max/1e8+'억 미만' : r.max/1e4+'만 미만');
+    return `<tr><td>${lo} ~ ${hi}</td><td class="r" style="color:var(--navy);font-weight:700">${(r.rate*1000).toFixed(1)}‰</td></tr>`;
+  }).join('');
+  el.innerHTML = `<div style="font-weight:600;color:var(--navy);margin-bottom:6px">${cat} · ${rl}</div>
+  <table class="dt"><thead><tr><th>시가표준액 구간</th><th style="text-align:right">매입율</th></tr></thead><tbody>${rows}</tbody></table>
+  <div style="color:var(--gray);font-size:10px;margin-top:5px">* 매입금액 = 시가표준액 × 매입율</div>`;
+}
 
-    if (isAdjusted) {
-      if (houseCount === 1) {
-        if (amount <= 60000000) { acqRate = 0.01; eduRate = 0.001; }
-        else if (amount <= 90000000) {
-          acqRate = (amount * 2 / 300000000 - 3) * 0.01;
-          acqRate = Math.round(acqRate * 10000) / 10000;
-          eduRate = acqRate * 0.1;
-        } else { acqRate = 0.03; eduRate = 0.003; }
-        agriRate = area85 === 'yes' ? 0 : 0.002;
-      } else if (houseCount === 2) {
-        acqRate = 0.08; eduRate = 0.004; agriRate = 0.006;
-      } else {
-        acqRate = 0.12; eduRate = 0.004; agriRate = 0.01;
+// =====================================================
+// 인지세 (부동산·주택 1억 이하 면제)
+// =====================================================
+function stampTax(amt) {
+  if (amt <= 100000000) return 0;
+  if (amt <= 300000000) return 20000;
+  if (amt <= 500000000) return 40000;
+  if (amt <= 1000000000) return 70000;
+  if (amt <= 10000000000) return 150000;
+  return 350000;
+}
+
+// =====================================================
+// 취득세 계산 (공통취득세자동계산_2.xlsx 기반)
+// =====================================================
+function f10(v) { return Math.floor(v/10)*10; }
+
+// 1주택 기본세율 (6억~9억 구간 포함)
+function h1rate(amt) {
+  if (amt <= 600000000) return 0.01;
+  if (amt <= 900000000) return Math.round((amt*2/300000000-3)*0.01*10000)/10000;
+  return 0.03;
+}
+
+function calcAcqTax(regType, taxBase, opts) {
+  const {region='조정', houseCount=1, htype='일반', area85='yes', taxexempt='no', exemptType='', gifttype='조정3억이상'} = opts;
+  let acq=0, agri=0, edu=0, exempt=0;
+
+  if (regType === '매매주택') {
+    const isAdj = region === '조정';
+    const cnt = parseInt(houseCount);
+    const isExemptHouse = taxexempt === 'yes';
+
+    let acqRate, eduRate, agriRate;
+
+    if (isAdj) {
+      if (cnt === 1) {
+        acqRate = h1rate(taxBase); eduRate = acqRate*0.1; agriRate = area85==='yes'?0:0.002;
+      } else if (cnt === 2) {
+        if (isExemptHouse) { acqRate=h1rate(taxBase); eduRate=acqRate*0.1; agriRate=area85==='yes'?0:0.002; }
+        else { acqRate=0.08; eduRate=0.004; agriRate=0.006; }
+      } else { // 3이상
+        if (isExemptHouse) { acqRate=h1rate(taxBase); eduRate=acqRate*0.1; agriRate=area85==='yes'?0:0.002; }
+        else { acqRate=0.12; eduRate=0.004; agriRate=0.01; }
       }
+    } else { // 비조정
+      if (cnt <= 2) {
+        acqRate=h1rate(taxBase); eduRate=acqRate*0.1; agriRate=area85==='yes'?0:0.002;
+      } else if (cnt === 3) {
+        if (isExemptHouse) { acqRate=h1rate(taxBase); eduRate=acqRate*0.1; agriRate=area85==='yes'?0:0.002; }
+        else { acqRate=0.08; eduRate=0.004; agriRate=0.006; }
+      } else { // 4이상
+        if (isExemptHouse) { acqRate=h1rate(taxBase); eduRate=acqRate*0.1; agriRate=area85==='yes'?0:0.002; }
+        else { acqRate=0.12; eduRate=0.004; agriRate=0.01; }
+      }
+    }
+    if (htype === '고급') acqRate += 0.08;
+
+    acq = f10(taxBase*acqRate);
+    agri = f10(taxBase*agriRate);
+
+    // 생애최초 감면: 취득세 본세에서 최대 200만원 감면
+    // 지방교육세 = (취득세 본세 - 감면액) × 0.1 (지방세법 151조 1항 1호 다목)
+    if (exemptType === '생애최초' && cnt <= 1) {
+      exempt = Math.min(acq, 2000000);
+      edu = f10((acq - exempt)*0.1);
     } else {
-      if (houseCount <= 2) {
-        if (amount <= 60000000) { acqRate = 0.01; eduRate = 0.001; }
-        else if (amount <= 90000000) {
-          acqRate = (amount * 2 / 300000000 - 3) * 0.01;
-          acqRate = Math.round(acqRate * 10000) / 10000;
-          eduRate = acqRate * 0.1;
-        } else { acqRate = 0.03; eduRate = 0.003; }
-        agriRate = area85 === 'yes' ? 0 : 0.002;
-      } else if (houseCount === 3) {
-        acqRate = 0.08; eduRate = 0.004; agriRate = 0.006;
-      } else {
-        acqRate = 0.12; eduRate = 0.004; agriRate = 0.01;
-      }
+      edu = f10(taxBase*eduRate);
     }
-    if (houseType === '고급') acqRate += 0.08;
-  } else if (isGiftHouse) {
-    const giftAmt = document.querySelector('input[name="giftAmt"]:checked')?.value || '3억이상';
-    acqRate = giftAmt === '3억이상' ? 0.12 : 0.035;
-    eduRate = 0.004;
-    agriRate = 0;
-  } else if (['transfer_sale_land','gift_land'].includes(type)) {
-    acqRate = 0.04; eduRate = 0.004; agriRate = 0.002;
-  } else if (type === 'inheritance') {
-    acqRate = 0.028; eduRate = 0.0016; agriRate = 0;
-  } else if (type === 'preservation') {
-    acqRate = 0.028; eduRate = 0.0016; agriRate = 0;
-  } else {
-    acqRate = 0.04; eduRate = 0.004; agriRate = 0.002;
+    return {acq, agri, edu, exempt, acqRate, agriRate, eduRate};
   }
 
-  return {
-    acq: Math.floor(amount * acqRate / 10) * 10,
-    edu: Math.floor(amount * eduRate / 10) * 10,
-    agri: Math.floor(amount * agriRate / 10) * 10
-  };
+  if (regType === '법인주택') {
+    acq=f10(taxBase*0.12); agri=f10(taxBase*0.01); edu=f10(taxBase*0.004);
+    return {acq,agri,edu,exempt:0,acqRate:0.12};
+  }
+  if (regType === '증여주택') {
+    const g = gifttype;
+    const acqRate = (g==='조정3억이상') ? 0.12 : 0.035;
+    const eduRate = (g==='조정3억이상') ? 0.004 : 0.003;
+    acq=f10(taxBase*acqRate); agri=0; edu=f10(taxBase*eduRate);
+    return {acq,agri,edu,exempt:0,acqRate};
+  }
+  if (regType === '증여토지') {
+    acq=f10(taxBase*0.04); agri=f10(taxBase*0.002); edu=f10(taxBase*0.004);
+    return {acq,agri,edu,exempt:0,acqRate:0.04};
+  }
+  if (regType === '상속일반') {
+    acq=f10(taxBase*0.028); agri=0; edu=f10(taxBase*0.0016);
+    return {acq,agri,edu,exempt:0,acqRate:0.028};
+  }
+  if (regType === '상속농지') {
+    // 농지 상속: 2.3%
+    acq=f10(taxBase*0.023); agri=0; edu=f10(taxBase*0.0016);
+    return {acq,agri,edu,exempt:0,acqRate:0.023};
+  }
+  if (regType === '원시취득') {
+    acq=f10(taxBase*0.028); agri=f10(taxBase*0.002); edu=f10(taxBase*0.0016);
+    return {acq,agri,edu,exempt:0,acqRate:0.028};
+  }
+  if (regType === '매매토지') {
+    acq=f10(taxBase*0.04); agri=f10(taxBase*0.002); edu=f10(taxBase*0.004);
+    return {acq,agri,edu,exempt:0,acqRate:0.04};
+  }
+  // 근저당 등록면허세
+  if (['근저당설정','근저당추가'].includes(regType)) {
+    const mort = pN('mortAmt');
+    const disc = document.querySelector('input[name="mortdisc"]:checked')?.value === 'yes';
+    const rate = disc ? 0.001 : 0.002;
+    const eduRate = disc ? 0.0002 : 0.0004;
+    return {acq:f10(mort*rate), agri:0, edu:f10(mort*eduRate), exempt:0, acqRate:rate};
+  }
+  return {acq:0,agri:0,edu:0,exempt:0,acqRate:0};
 }
 
-// ==================== 법무사 보수 계산 ====================
-function calcScrivenerFee(amount, type) {
-  // 부동산 소유권이전·보존·담보권설정 등 (I.1)
-  if (['transfer_sale_house','transfer_sale_land','gift_house','gift_land','inheritance','preservation','mortgage_set'].includes(type)) {
-    if (amount <= 50000000) return 210000;
-    if (amount <= 100000000) return 210000 + (amount - 50000000) * 10/10000;
-    if (amount <= 300000000) return 260000 + (amount - 100000000) * 9/10000;
-    if (amount <= 500000000) return 440000 + (amount - 300000000) * 8/10000;
-    if (amount <= 1000000000) return 600000 + (amount - 500000000) * 7/10000;
-    if (amount <= 2000000000) return 950000 + (amount - 1000000000) * 5/10000;
-    if (amount <= 20000000000) return 1450000 + (amount - 2000000000) * 4/10000;
-    return 8650000 + (amount - 20000000000) * 1/10000;
+// =====================================================
+// 법무사 보수 계산 (2024 보수표)
+// =====================================================
+function calcBracket(brackets, amt) {
+  if (amt <= brackets[0][0]) return brackets[0][1];
+  for (let i=1;i<brackets.length;i++) {
+    if (amt <= brackets[i][0]) return Math.round(brackets[i][1] + (amt-brackets[i-1][0])*brackets[i][2]);
   }
-  // 담보권 추가 설정 (I.2)
-  if (type === 'mortgage_add') {
-    if (amount <= 50000000) return 105000;
-    if (amount <= 200000000) return 105000 + (amount - 50000000) * 5/10000;
-    if (amount <= 1000000000) return 180000 + (amount - 200000000) * 2/10000;
-    if (amount <= 10000000000) return 340000 + (amount - 1000000000) * 1/10000;
-    return 1240000 + (amount - 10000000000) * 1/20000;
-  }
+  const last = brackets[brackets.length-1];
+  const prev = brackets[brackets.length-2];
+  return Math.round(last[1] + (amt-prev[0])*last[2]);
+}
+
+const BR1 = [[50000000,210000,0],[100000000,210000,10/10000],[300000000,260000,9/10000],[500000000,440000,8/10000],[1000000000,600000,7/10000],[2000000000,950000,5/10000],[20000000000,1450000,4/10000],[Infinity,8650000,1/10000]];
+const BR2 = [[50000000,105000,0],[200000000,105000,5/10000],[1000000000,180000,2/10000],[10000000000,340000,1/10000],[Infinity,1240000,1/20000]];
+const BR_EST = [[50000000,420000,0],[100000000,420000,22/10000],[300000000,530000,9/10000],[500000000,710000,8/10000],[1000000000,870000,7/10000],[2000000000,1220000,6/10000],[20000000000,1820000,4/10000],[Infinity,9020000,1/10000]];
+const BR_CAP = [[50000000,300000,0],[100000000,300000,19/10000],[300000000,395000,8/10000],[500000000,555000,7/10000],[1000000000,695000,6/10000],[2000000000,995000,5/10000],[20000000000,1495000,4/10000],[Infinity,8695000,1/10000]];
+const BR_LIT_A = [[30000000,560000,0],[200000000,560000,10/10000],[500000000,730000,9/10000],[1000000000,1000000,4/10000],[2000000000,1200000,3/10000],[Infinity,1500000,1/10000]];
+const BR_LIT_B = [[30000000,260000,0],[200000000,260000,1/10000],[500000000,277000,5/10000],[1000000000,427000,4/10000],[2000000000,627000,2/10000],[Infinity,827000,1/10000]];
+
+const FIXED = {'근저당말소':80000,'주소변경':40000,'명의변경':40000,'말소등기':80000,'권리변경':120000,'임원변경':100000,'본점이전':120000,'지점설치':120000,'해산청산':120000,'합병무증자':180000,'외국영업소':280000};
+
+function scrivenerFee(regType, amount) {
+  if (FIXED[regType]) return FIXED[regType];
+  if (['매매주택','법인주택','증여주택','증여토지','상속일반','상속농지','원시취득','매매토지','근저당설정'].includes(regType)) return calcBracket(BR1, amount);
+  if (regType === '근저당추가') return calcBracket(BR2, amount);
   return 0;
 }
 
-function calcFixedFee(type) {
-  const fixedFees = {
-    'address_change': 40000,
-    'name_change': 40000,
-    'cancel': 80000,
-    'mortgage_cancel': 80000,
-    'right_change': 120000,
-  };
-  return fixedFees[type] || 0;
-}
-
-// 상업등기
-function calcCommercialFee(amount, type) {
-  if (['officer_change','address_change_com','branch_open','dissolve'].includes(type)) return 120000;
-  if (type === 'merge_no_capital') return 180000;
-  if (type === 'foreign_company') return 280000;
-
-  if (type === 'establish') {
-    if (amount <= 50000000) return 420000;
-    if (amount <= 100000000) return 420000 + (amount-50000000)*22/10000;
-    if (amount <= 300000000) return 530000 + (amount-100000000)*9/10000;
-    if (amount <= 500000000) return 710000 + (amount-300000000)*8/10000;
-    if (amount <= 1000000000) return 870000 + (amount-500000000)*7/10000;
-    if (amount <= 2000000000) return 1220000 + (amount-1000000000)*6/10000;
-    if (amount <= 20000000000) return 1820000 + (amount-2000000000)*4/10000;
-    return 9020000 + (amount-20000000000)*1/10000;
-  }
-  if (type === 'capital_change') {
-    if (amount <= 50000000) return 300000;
-    if (amount <= 100000000) return 300000 + (amount-50000000)*19/10000;
-    if (amount <= 300000000) return 395000 + (amount-100000000)*8/10000;
-    if (amount <= 500000000) return 555000 + (amount-300000000)*7/10000;
-    if (amount <= 1000000000) return 695000 + (amount-500000000)*6/10000;
-    if (amount <= 2000000000) return 995000 + (amount-1000000000)*5/10000;
-    if (amount <= 20000000000) return 1495000 + (amount-2000000000)*4/10000;
-    return 8695000 + (amount-20000000000)*1/10000;
-  }
+function commercialFee(type, amt) {
+  if (FIXED[type]) return FIXED[type];
+  if (type === '설립') return calcBracket(BR_EST, amt);
+  if (type === '자본변경') return calcBracket(BR_CAP, amt);
   return 0;
 }
 
-// 송무
-function calcLitigationFee(amount, type) {
-  if (type === 'simple_doc') return 40000;
-  const amt = amount || 50000000; // default
-  if (type === 'lawsuit_A') {
-    if (amt <= 30000000) return 560000;
-    if (amt <= 200000000) return 560000 + (amt-30000000)*10/10000;
-    if (amt <= 500000000) return 730000 + (amt-200000000)*9/10000;
-    if (amt <= 1000000000) return 1000000 + (amt-500000000)*4/10000;
-    if (amt <= 2000000000) return 1200000 + (amt-1000000000)*3/10000;
-    return 1500000 + (amt-2000000000)*1/10000;
-  }
-  if (type === 'lawsuit_B') {
-    if (amt <= 30000000) return 260000;
-    if (amt <= 200000000) return 260000 + (amt-30000000)*1/10000;
-    if (amt <= 500000000) return 277000 + (amt-200000000)*5/10000;
-    if (amt <= 1000000000) return 427000 + (amt-500000000)*4/10000;
-    if (amt <= 2000000000) return 627000 + (amt-1000000000)*2/10000;
-    return 827000 + (amt-2000000000)*1/10000;
-  }
+function litigationFee(type, amt) {
+  if (type === 'simple') return 40000;
+  const a = amt || 50000000;
+  if (type === 'A') return calcBracket(BR_LIT_A, a);
+  if (type === 'B') return calcBracket(BR_LIT_B, a);
   return 0;
 }
 
-// ==================== MAIN CALCULATE ====================
-function calculateAll() {
-  const activeTab = document.querySelector('.tab-content.active')?.id || '';
-  
-  let govFee = 0, baseFee = 0, addlFee = 0;
-  let acqTax = 0, eduTax = 0, agriTax = 0;
-  let regFeeAmt = parseNum('regFee');
-  let certFeeAmt = parseNum('certFee');
-  let bondBuy = 0, bondDiscount = 0;
-
-  if (activeTab === 'tab-real-estate') {
-    const regType = document.getElementById('regType').value;
-    const taxBase = parseNum('taxBase');
-    const mortgageAmt = parseNum('mortgageAmt');
-    const bondDiscountRate = parseFloat(document.getElementById('bondDiscountRate').value) / 100;
-    const bondBuyRate = parseFloat(document.getElementById('bondBuyRate').value) / 1000;
-    const publicPrice = parseNum('publicPrice');
-    const bondTypeEl = document.querySelector('input[name="bondType"]:checked');
-    const bondType = bondTypeEl ? bondTypeEl.value : '없음';
-
-    if (regType && ['transfer_sale_house','transfer_sale_land','gift_house','gift_land','inheritance','preservation'].includes(regType)) {
-      const taxes = calcAcquisitionTax(taxBase, regType);
-      acqTax = taxes.acq; eduTax = taxes.edu; agriTax = taxes.agri;
-      baseFee = Math.round(calcScrivenerFee(taxBase, regType));
-      
-      // 국민주택채권
-      if (bondType !== '없음' && publicPrice > 0 && bondBuyRate > 0) {
-        bondBuy = Math.round(publicPrice * bondBuyRate);
-        if (bondType === '즉시매도') {
-          bondDiscount = Math.round(bondBuy * bondDiscountRate);
-        }
-      }
-      
-      // Bond detail
-      updateBondDetail(publicPrice, bondBuyRate, bondBuy, bondDiscount, bondDiscountRate);
-    } else if (regType === 'mortgage_set') {
-      baseFee = Math.round(calcScrivenerFee(mortgageAmt, 'mortgage_set'));
-    } else if (regType === 'mortgage_add') {
-      baseFee = Math.round(calcScrivenerFee(mortgageAmt, 'mortgage_add'));
-    } else if (regType) {
-      baseFee = calcFixedFee(regType);
-    }
-
-    // Optional fees
-    const confirm = document.getElementById('chk_confirm').checked ? 120000 : 0;
-    const origin = document.getElementById('chk_origin').checked ? 50000 : 0;
-    const tradeReport = document.getElementById('chk_trade_report').checked ? 50000 : 0;
-    const taxReport = document.getElementById('chk_tax_report').checked ? 50000 : 0;
-    const bondAgent = document.getElementById('chk_bond_agent').checked ? 40000 : 0;
-    const permit = document.getElementById('chk_permit').checked ? 50000 : 0;
-    const other = document.getElementById('chk_other').checked ? 40000 : 0;
-    const travel = parseNum('travelCost');
-    const daily = parseInt(document.getElementById('dailyAllowance').value) || 0;
-
-    // 가산보수
-    const addlFeeType = document.getElementById('addlFeeType').value;
-    const addlFeeRate = parseFloat(document.getElementById('addlFeeRate').value) || 0;
-    const addlFeeFixed = parseNum('addlFeeFixed');
-    let addlFromRate = 0;
-    if (addlFeeType !== 'none') {
-      addlFromRate = Math.round(baseFee * addlFeeRate / 100);
-    }
-    addlFee = addlFeeFixed + addlFromRate;
-
-    govFee = acqTax + eduTax + agriTax + regFeeAmt + certFeeAmt + bondBuy;
-    const feeSub = baseFee + addlFee + confirm + origin + tradeReport + taxReport + bondAgent + permit + other + travel + daily;
-
-    setResult('r-acq-tax', acqTax);
-    setResult('r-edu-tax', eduTax);
-    setResult('r-agri-tax', agriTax);
-    setResult('r-reg-fee', regFeeAmt);
-    setResult('r-stamp', 0);
-    setResult('r-bond-buy', bondBuy);
-    setResult('r-bond-discount', bondDiscount);
-    setResult('r-cert', certFeeAmt);
-    setResult('r-gov-total', govFee);
-    setResult('r-base-fee', baseFee);
-    setResult('r-addl-fee', addlFee);
-    setResult('r-confirm', confirm);
-    setResult('r-origin', origin);
-    setResult('r-trade-report', tradeReport);
-    setResult('r-tax-report', taxReport);
-    setResult('r-bond-agent', bondAgent);
-    setResult('r-permit', permit);
-    setResult('r-other', other);
-    setResult('r-travel', travel);
-    setResult('r-daily', daily);
-
-    // Other items
-    let otherItemsTotal = calcOtherItemsTotal();
-    const feeTotal = feeSub + otherItemsTotal;
-    const vat = Math.round(feeTotal * 0.1);
-    setResult('r-fee-total', feeTotal);
-    setResult('r-vat', vat);
-    setResult('r-vat-total', vat);
-    setResult('r-grand-total', govFee + feeTotal + vat);
-
-  } else if (activeTab === 'tab-commercial') {
-    const comType = document.getElementById('commercialType').value;
-    const comAmt = parseNum('commercialAmt');
-    baseFee = Math.round(calcCommercialFee(comAmt, comType));
-    const addlFeeFixed = parseNum('addlFeeFixed');
-    addlFee = addlFeeFixed;
-
-    setResult('r-acq-tax', 0); setResult('r-edu-tax', 0); setResult('r-agri-tax', 0);
-    setResult('r-reg-fee', regFeeAmt); setResult('r-stamp', 0);
-    setResult('r-bond-buy', 0); setResult('r-bond-discount', 0);
-    setResult('r-cert', certFeeAmt);
-    govFee = regFeeAmt + certFeeAmt;
-    setResult('r-gov-total', govFee);
-    setResult('r-base-fee', baseFee);
-    setResult('r-addl-fee', addlFee);
-    setResult('r-confirm', 0); setResult('r-origin', 0);
-    setResult('r-trade-report', 0); setResult('r-tax-report', 0);
-    setResult('r-bond-agent', 0); setResult('r-permit', 0); setResult('r-other', 0);
-    setResult('r-travel', 0); setResult('r-daily', 0);
-    const feeTotal = baseFee + addlFee + calcOtherItemsTotal();
-    const vat = Math.round(feeTotal * 0.1);
-    setResult('r-fee-total', feeTotal);
-    setResult('r-vat', vat); setResult('r-vat-total', vat);
-    setResult('r-grand-total', govFee + feeTotal + vat);
-
-  } else if (activeTab === 'tab-litigation') {
-    const litType = document.getElementById('litigationType').value;
-    const litAmt = parseNum('litigationAmt') || 50000000;
-    baseFee = Math.round(calcLitigationFee(litAmt, litType));
-
-    setResult('r-acq-tax', 0); setResult('r-edu-tax', 0); setResult('r-agri-tax', 0);
-    setResult('r-reg-fee', 0); setResult('r-stamp', 0);
-    setResult('r-bond-buy', 0); setResult('r-bond-discount', 0);
-    setResult('r-cert', certFeeAmt);
-    govFee = certFeeAmt;
-    setResult('r-gov-total', govFee);
-    setResult('r-base-fee', baseFee);
-    setResult('r-addl-fee', 0);
-    setResult('r-confirm', 0); setResult('r-origin', 0);
-    setResult('r-trade-report', 0); setResult('r-tax-report', 0);
-    setResult('r-bond-agent', 0); setResult('r-permit', 0); setResult('r-other', 0);
-    setResult('r-travel', 0); setResult('r-daily', 0);
-    const feeTotal = baseFee + calcOtherItemsTotal();
-    const vat = Math.round(feeTotal * 0.1);
-    setResult('r-fee-total', feeTotal);
-    setResult('r-vat', vat); setResult('r-vat-total', vat);
-    setResult('r-grand-total', govFee + feeTotal + vat);
-  } else {
-    // Other fees only
-    setResult('r-acq-tax', 0); setResult('r-edu-tax', 0); setResult('r-agri-tax', 0);
-    setResult('r-reg-fee', 0); setResult('r-stamp', 0);
-    setResult('r-bond-buy', 0); setResult('r-bond-discount', 0); setResult('r-cert', 0);
-    setResult('r-gov-total', 0); setResult('r-base-fee', 0); setResult('r-addl-fee', 0);
-    setResult('r-confirm', 0); setResult('r-origin', 0); setResult('r-trade-report', 0);
-    setResult('r-tax-report', 0); setResult('r-bond-agent', 0); setResult('r-permit', 0);
-    setResult('r-other', 0); setResult('r-travel', 0); setResult('r-daily', 0);
-    const feeTotal = calcOtherItemsTotal();
-    const vat = Math.round(feeTotal * 0.1);
-    setResult('r-fee-total', feeTotal); setResult('r-vat', vat); setResult('r-vat-total', vat);
-    setResult('r-grand-total', feeTotal + vat);
-  }
+// =====================================================
+// UI
+// =====================================================
+function switchTab(t) {
+  ['re','com','lit','oth'].forEach((id,i) => {
+    document.querySelectorAll('.tb')[i].classList.toggle('active', id===t);
+    document.getElementById('tab-'+id).classList.toggle('active', id===t);
+  });
+  calcAll();
 }
 
-function updateBondDetail(publicPrice, bondBuyRate, bondBuy, bondDiscount, discountRate) {
-  const el = document.getElementById('bond-calc-detail');
-  if (publicPrice > 0 && bondBuyRate > 0) {
-    el.innerHTML = `
-      <div style="margin-bottom:6px;font-weight:600;color:var(--navy)">국민주택채권 계산</div>
-      <div>주택공시가격: <b>${publicPrice.toLocaleString()}원</b></div>
-      <div>채권매입율: <b>${(bondBuyRate*1000).toFixed(1)}‰</b></div>
-      <div>채권매입금액: <b>${bondBuy.toLocaleString()}원</b></div>
-      <div>할인율: <b>${(discountRate*100).toFixed(5)}%</b></div>
-      <div style="margin-top:4px;padding-top:4px;border-top:1px solid var(--border)">
-        할인비용: <b style="color:var(--navy)">${bondDiscount.toLocaleString()}원</b>
-      </div>
-    `;
-  } else {
-    el.innerHTML = '<div style="color:var(--gray)">주택공시가격과 채권매입율을 입력하면 채권 정보가 표시됩니다.</div>';
+function onRegChange() {
+  const v = document.getElementById('regType').value;
+  const show = (id, vis) => { const el = document.getElementById(id); if(el) el.style.display = vis?'':'none'; };
+  show('s_hsale',   v==='매매주택');
+  show('s_gift',    v==='증여주택');
+  show('s_inherit', ['상속일반','상속농지'].includes(v));
+  show('s_taxbase', !['근저당설정','근저당추가','근저당말소','주소변경','명의변경','말소등기','권리변경'].includes(v));
+  show('s_mort',    ['근저당설정','근저당추가'].includes(v));
+  show('s_bond',    !['근저당설정','근저당추가','근저당말소','주소변경','명의변경','말소등기','권리변경'].includes(v));
+  const idesc = document.getElementById('inheritdesc');
+  if (idesc) {
+    if (v==='상속일반') idesc.textContent = '일반 상속: 취득세 2.8% + 지방교육세 0.16%';
+    if (v==='상속농지') idesc.textContent = '농지 상속: 취득세 2.3% + 지방교육세 0.16%';
   }
+  calcAll();
 }
 
-// ==================== OTHER ITEMS ====================
+function onTaxBaseInput(el) {
+  fmtN(el);
+  const amt = pN('taxBase');
+  const st = stampTax(amt);
+  document.getElementById('stampTax').value = st > 0 ? st.toLocaleString() : '0';
+  calcAll();
+}
+
+function onBondCatChange() {
+  const cat = document.getElementById('bondCat').value;
+  document.getElementById('s_bondprice').style.display = cat==='없음' ? 'none' : '';
+  renderBondRef(cat, document.getElementById('bondRegion').value);
+  calcAll();
+}
+
+// =====================================================
+// 기타 항목
+// =====================================================
 const otherItems = [];
-
-function addOtherItem() {
-  const type = document.getElementById('addItemType').value;
-  const customName = document.getElementById('customItemName').value;
-  const customAmt = parseNum('customItemAmt') || parseNumDirect(document.getElementById('customItemAmt').value);
-
-  const presets = {
-    'consult_single': {name:'개별 상담·자문', amt:150000},
-    'consult_monthly': {name:'계속 상담·자문(월액)', amt:600000},
-    'contract_write': {name:'계약서 등 문서 작성', amt:80000},
-    'notarize': {name:'공증 대행', amt:50000},
-    'corp_seal': {name:'법인인감카드 발급 대행', amt:40000},
-    'submit_court': {name:'법원 서류 제출 대행', amt:40000},
-  };
-
+const PRESETS = {
+  '상담개별':{name:'개별 상담·자문',amt:150000},'상담계속':{name:'계속 상담·자문(월액)',amt:600000},
+  '계약서작성':{name:'계약서 등 문서 작성',amt:80000},'공증':{name:'공증 대행',amt:50000},
+  '법인인감카드':{name:'법인인감카드 발급 대행',amt:40000},'법원제출':{name:'법원 서류 제출 대행',amt:40000},
+};
+function onAddTypeChange() {
+  const v = document.getElementById('addType').value === 'custom';
+  document.getElementById('custAmtGrp').style.display = v?'':'none';
+  document.getElementById('custNameGrp').style.display = v?'':'none';
+}
+function addItem() {
+  const type = document.getElementById('addType').value;
   let item;
   if (type === 'custom') {
-    item = {name: customName || '기타', amt: customAmt};
-  } else {
-    item = {...presets[type]};
+    const name = document.getElementById('custName').value.trim();
+    const amt = pNd(document.getElementById('custAmt').value);
+    if (!name||!amt) { alert('항목명과 금액을 입력하세요.'); return; }
+    item = {name,amt};
+  } else { item = {...PRESETS[type]}; }
+  otherItems.push(item);
+  renderItems(); calcAll();
+}
+function removeItem(i) { otherItems.splice(i,1); renderItems(); calcAll(); }
+function renderItems() {
+  const tb = document.getElementById('otherBody');
+  tb.innerHTML = otherItems.length ? otherItems.map((item,i) =>
+    `<tr><td>${item.name}</td><td class="r">${item.amt.toLocaleString()}원</td><td><button class="btn br bsm" onclick="removeItem(${i})">삭제</button></td></tr>`
+  ).join('') : '<tr><td colspan="3" style="color:var(--gray);text-align:center;padding:10px">추가된 항목 없음</td></tr>';
+  document.getElementById('R_otherlist').innerHTML = otherItems.map(item =>
+    `<div class="rr"><span class="lb">${item.name}</span><span class="vl">${item.amt.toLocaleString()}원</span></div>`
+  ).join('');
+}
+
+// =====================================================
+// 메인 계산
+// =====================================================
+function calcAll() {
+  const tab = document.querySelector('.tc.active')?.id || '';
+  let acq=0,agri=0,edu=0,exempt=0,regGov=0,stamp=0,bondBuy=0,bondDisc=0,certGov=0;
+  let base=0,addl=0,confirm=0,origin=0,trade=0,taxrpt=0,bondagt=0,permit=0,otherdeed=0,travelAmt=0,dailyAmt=0;
+
+  if (tab === 'tab-re') {
+    const regType = document.getElementById('regType').value;
+    const taxBase = pN('taxBase');
+    const opts = {
+      region: document.querySelector('input[name="region"]:checked')?.value||'조정',
+      houseCount: parseInt(document.getElementById('houseCount').value)||1,
+      htype: document.querySelector('input[name="htype"]:checked')?.value||'일반',
+      area85: document.querySelector('input[name="area85"]:checked')?.value||'yes',
+      taxexempt: document.querySelector('input[name="taxexempt"]:checked')?.value||'no',
+      exemptType: document.getElementById('exemptType')?.value||'',
+      gifttype: document.querySelector('input[name="gifttype"]:checked')?.value||'조정3억이상',
+    };
+
+    // 세금 계산
+    const taxRes = calcAcqTax(regType, taxBase, opts);
+    acq=taxRes.acq; agri=taxRes.agri; edu=taxRes.edu; exempt=taxRes.exempt;
+
+    // 세율 박스 업데이트 (매매주택)
+    if (regType === '매매주택') {
+      const rb = document.getElementById('ratebox');
+      rb.style.display = taxBase > 0 ? '' : 'none';
+      if (taxBase > 0) {
+        const ar = taxRes.acqRate;
+        document.getElementById('ratebadge').textContent = `취득세 ${(ar*100).toFixed(ar<0.1?2:0)}%`;
+        const descParts = [`취득세: ${(ar*100).toFixed(2)}%`, `지방교육세: ${((taxRes.eduRate||ar*0.1)*100).toFixed(2)}%`];
+        if (taxRes.agriRate > 0) descParts.push(`농특세: ${(taxRes.agriRate*100).toFixed(1)}%`);
+        if (exempt > 0) descParts.push(`생애최초 감면: ▼ ${exempt.toLocaleString()}원`);
+        document.getElementById('ratedesc').textContent = descParts.join(' | ');
+      }
+    }
+
+    // 법무사 보수
+    const feeBase = ['근저당설정','근저당추가'].includes(regType) ? pN('mortAmt') : taxBase;
+    base = scrivenerFee(regType, feeBase);
+
+    // 국민주택채권
+    const cat = document.getElementById('bondCat').value;
+    const region2 = document.getElementById('bondRegion').value;
+    renderBondRef(cat, region2);
+    if (cat !== '없음') {
+      const pub = pN('pubPrice');
+      const rate = getBondRate(cat, region2, pub);
+      bondBuy = Math.round(pub * rate / 10) * 10;
+      document.getElementById('bondRateDisp').value = rate > 0 ? (rate*1000).toFixed(1) : '–';
+      document.getElementById('bondBuyDisp').value = bondBuy > 0 ? bondBuy.toLocaleString() : '0';
+      const bt = document.querySelector('input[name="bondtype"]:checked')?.value;
+      const dr = parseFloat(document.getElementById('bondDiscRate').value)/100||0;
+      bondDisc = bt==='즉시매도' ? Math.round(bondBuy*dr/10)*10 : 0;
+      document.getElementById('bondDiscDisp').value = bondDisc > 0 ? bondDisc.toLocaleString() : '0';
+      const bcard = document.getElementById('bondDetailCard');
+      if (bondBuy > 0) {
+        bcard.style.display = '';
+        bcard.innerHTML = [
+          ['시가표준액', pub.toLocaleString()+'원'],
+          ['채권매입율', (rate*1000).toFixed(1)+'‰'],
+          ['채권매입금액', bondBuy.toLocaleString()+'원'],
+          ['할인율', (dr*100).toFixed(5)+'%'],
+          ['즉시매도 할인비용', `<span style="color:var(--green)">${bondDisc.toLocaleString()}원</span>`],
+        ].map(([l,v])=>`<div class="br2"><span class="bl2">${l}</span><span>${v}</span></div>`).join('');
+      } else { bcard.style.display='none'; }
+    } else {
+      document.getElementById('bondRateDisp').value='–';
+      document.getElementById('bondBuyDisp').value='0';
+      document.getElementById('bondDiscDisp').value='0';
+      document.getElementById('bondDetailCard').style.display='none';
+    }
+
+    regGov   = pN('regFee');
+    stamp    = pN('stampTax');
+    certGov  = pN('certFee');
+    confirm  = document.getElementById('chk_confirm').checked ? 120000 : 0;
+    origin   = document.getElementById('chk_origin').checked  ? 50000  : 0;
+    trade    = document.getElementById('chk_trade').checked   ? 50000  : 0;
+    taxrpt   = document.getElementById('chk_taxrpt').checked  ? 50000  : 0;
+    bondagt  = document.getElementById('chk_bondagt').checked ? 40000  : 0;
+    permit   = document.getElementById('chk_permit').checked  ? 50000  : 0;
+    otherdeed= document.getElementById('chk_otherdeed').checked?40000  : 0;
+    travelAmt= pN('travel');
+    dailyAmt = parseInt(document.getElementById('daily').value)||0;
+
+  } else if (tab === 'tab-com') {
+    const type = document.getElementById('comType').value;
+    const amt  = pN('comAmt');
+    base = type ? commercialFee(type, amt) : 0;
+    regGov  = pN('regFee_com');
+    certGov = pN('certFee_com');
+
+  } else if (tab === 'tab-lit') {
+    const type = document.getElementById('litType').value;
+    const amt  = pN('litAmt');
+    base = type ? litigationFee(type, amt) : 0;
   }
 
-  if (item.amt <= 0) { alert('금액을 입력하세요'); return; }
-  otherItems.push(item);
-  renderOtherItems();
-  calculateAll();
+  // 가산보수
+  const addlType  = document.getElementById('addlType').value;
+  const addlRate  = parseFloat(document.getElementById('addlRate').value)||0;
+  const addlFixed = pN('addlFixed');
+  addl = (addlType!=='none' ? Math.round(base*addlRate/100) : 0) + addlFixed;
+
+  // 합계
+  const govTotal = acq+agri+edu-exempt+regGov+stamp+bondBuy+certGov;
+  const otherTotal = otherItems.reduce((s,i)=>s+i.amt,0);
+  const feeTotal = base+addl+confirm+origin+trade+taxrpt+bondagt+permit+otherdeed+travelAmt+dailyAmt+otherTotal;
+  const vat = Math.round(feeTotal*0.1);
+  const grand = govTotal+feeTotal+vat;
+
+  // 렌더링
+  sv('R_acq', acq);
+  sv('R_agri', agri);
+  sv('R_edu', edu);
+  const exemptEl = document.getElementById('R_exempt');
+  exemptEl.textContent = exempt>0 ? `▼ ${exempt.toLocaleString()}원` : '–';
+  sv('R_reg', regGov);
+  sv('R_stamp', stamp);
+  sv('R_bondbuy', bondBuy);
+  document.getElementById('R_bonddisc').textContent = bondDisc>0 ? `▼ ${bondDisc.toLocaleString()}원` : '–';
+  sv('R_cert', certGov);
+  document.getElementById('R_govtotal').textContent = fmt(govTotal);
+  sv('R_base', base);
+  sv('R_addl', addl);
+  sv('R_confirm', confirm);
+  sv('R_origin', origin);
+  sv('R_trade', trade);
+  sv('R_taxrpt', taxrpt);
+  sv('R_bondagt', bondagt);
+  sv('R_permit', permit);
+  sv('R_otherdeed', otherdeed);
+  sv('R_travel', travelAmt);
+  sv('R_daily', dailyAmt);
+  document.getElementById('R_feetotal').textContent = fmt(feeTotal);
+  document.getElementById('R_vat').textContent = fmt(vat);
+  document.getElementById('R_vattotal').textContent = fmt(vat);
+  document.getElementById('R_grand').textContent = fmt(grand);
+
+  window._snap = {acq,agri,edu,exempt,regGov,stamp,bondBuy,bondDisc,certGov,govTotal,base,addl,confirm,origin,trade,taxrpt,bondagt,permit,otherdeed,travelAmt,dailyAmt,feeTotal,vat,grand};
 }
 
-function removeOtherItem(idx) {
-  otherItems.splice(idx, 1);
-  renderOtherItems();
-  calculateAll();
+// =====================================================
+// 유틸
+// =====================================================
+function sv(id, v) {
+  const el=document.getElementById(id); if(!el)return;
+  el.textContent=fmt(v); el.className='vl'+(v===0?' z':'');
 }
-
-function renderOtherItems() {
-  const tbody = document.getElementById('other-items');
-  tbody.innerHTML = otherItems.map((item, i) => `
-    <tr>
-      <td>${item.name}</td>
-      <td class="amount">${item.amt.toLocaleString()}원</td>
-      <td>1</td>
-      <td class="amount">${item.amt.toLocaleString()}원</td>
-      <td><button class="btn btn-danger btn-sm" onclick="removeOtherItem(${i})">삭제</button></td>
-    </tr>
-  `).join('');
-
-  // Update result list
-  const listEl = document.getElementById('r-other-items-list');
-  listEl.innerHTML = otherItems.map(item => `
-    <div class="result-item"><span class="label">${item.name}</span><span class="value">${item.amt.toLocaleString()}원</span></div>
-  `).join('');
+function fmt(n) { return Math.round(n).toLocaleString('ko-KR')+'원'; }
+function fmtN(el) {
+  const r=el.value.replace(/[^0-9]/g,'');
+  el.value=r===''?'':parseInt(r).toLocaleString('ko-KR');
 }
+function pN(id) { return pNd(document.getElementById(id)?.value||''); }
+function pNd(v) { return parseInt(String(v).replace(/[^0-9]/g,''))||0; }
 
-function calcOtherItemsTotal() {
-  return otherItems.reduce((s, i) => s + i.amt, 0);
-}
-
-// ==================== RESET ====================
 function resetAll() {
-  if (!confirm('모든 입력값을 초기화하시겠습니까?')) return;
-  document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
-    if (!['travelCost','regFee','certFee','bondDiscountRate','manager'].includes(el.id)) {
-      el.value = '';
-    }
-  });
-  document.getElementById('travelCost').value = '80,000';
-  document.getElementById('regFee').value = '36,000';
-  document.getElementById('certFee').value = '20,000';
-  document.getElementById('bondDiscountRate').value = '12.84181';
-  document.getElementById('bondBuyRate').value = '0';
-  document.getElementById('regType').value = '';
-  document.getElementById('chk_origin').checked = true;
-  document.getElementById('chk_tax_report').checked = true;
-  document.getElementById('chk_bond_agent').checked = true;
-  document.getElementById('chk_confirm').checked = false;
-  document.getElementById('chk_trade_report').checked = false;
-  document.getElementById('chk_permit').checked = false;
-  document.getElementById('chk_other').checked = false;
-  document.getElementById('addlFeeFixed').value = '20,000';
-  otherItems.length = 0;
-  renderOtherItems();
-  updateRegType();
-  calculateAll();
+  if (!confirm('모든 입력값을 초기화하겠습니까?')) return;
+  ['caseName','clientName','clientPhone','propertyDesc','taxBase','mortAmt','pubPrice','comAmt','litAmt'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('stampTax').value='0';
+  document.getElementById('travel').value='80,000';
+  document.getElementById('regFee').value='36,000';
+  document.getElementById('certFee').value='20,000';
+  document.getElementById('bondDiscRate').value='12.84181';
+  document.getElementById('addlFixed').value='20,000';
+  document.getElementById('addlRate').value='0';
+  document.getElementById('regType').value='';
+  document.getElementById('houseCount').value='1';
+  document.getElementById('exemptType').value='';
+  ['chk_origin','chk_taxrpt','chk_bondagt'].forEach(id=>document.getElementById(id).checked=true);
+  ['chk_confirm','chk_trade','chk_permit','chk_otherdeed'].forEach(id=>document.getElementById(id).checked=false);
+  otherItems.length=0; renderItems(); onRegChange(); calcAll();
 }
 
-// ==================== COPY ====================
-function copyToClipboard() {
-  const lines = [
-    `=== 법무사 비용 내역서 ===`,
+function copyResult() {
+  const s = window._snap||{};
+  const lines = ['=== 법무사 비용 내역 ===',
     `사건명: ${document.getElementById('caseName').value}`,
-    `의뢰인: ${document.getElementById('clientName').value}`,
-    ``,
-    `[공과금]`,
-    `취득세: ${document.getElementById('r-acq-tax').textContent}`,
-    `교육세: ${document.getElementById('r-edu-tax').textContent}`,
-    `농특세: ${document.getElementById('r-agri-tax').textContent}`,
-    `등기신청수수료: ${document.getElementById('r-reg-fee').textContent}`,
-    `국민주택채권: ${document.getElementById('r-bond-buy').textContent}`,
-    `공과금 소계: ${document.getElementById('r-gov-total').textContent}`,
-    ``,
-    `[보수액]`,
-    `기본보수: ${document.getElementById('r-base-fee').textContent}`,
-    `가산보수: ${document.getElementById('r-addl-fee').textContent}`,
-    `보수액 소계: ${document.getElementById('r-fee-total').textContent}`,
-    `부가가치세: ${document.getElementById('r-vat').textContent}`,
-    ``,
-    `합계: ${document.getElementById('r-grand-total').textContent}`,
+    `의뢰인: ${document.getElementById('clientName').value}`,'',
+    '[공과금]',`취득세/등록면허세: ${fmt(s.acq||0)}`,
+    `농어촌특별세: ${fmt(s.agri||0)}`,`지방교육세: ${fmt(s.edu||0)}`,
+    `공과금 소계 ①: ${fmt(s.govTotal||0)}`,'',
+    '[보수액]',`기본보수: ${fmt(s.base||0)}`,`보수액 소계 ②: ${fmt(s.feeTotal||0)}`,
+    `부가가치세 ③: ${fmt(s.vat||0)}`,'',`합계: ${fmt(s.grand||0)}`,
   ];
-  navigator.clipboard.writeText(lines.join('\n')).then(() => alert('클립보드에 복사되었습니다.'));
+  navigator.clipboard?.writeText(lines.join('\n')).then(()=>alert('복사되었습니다.'));
 }
 
-// ==================== GENERATE REPORT ====================
+// =====================================================
+// 비용내역서 출력
+// =====================================================
 function generateReport() {
-  // Gather all data
-  const data = {
-    caseName: document.getElementById('caseName').value || '소유권이전등기',
-    clientName: document.getElementById('clientName').value || '',
-    manager: document.getElementById('manager').value || '정운영',
-    phone: document.getElementById('clientPhone').value || '',
-    propertyDesc: document.getElementById('propertyDesc').value || '',
-    taxBase: parseNum('taxBase'),
-    publicPrice: parseNum('publicPrice'),
-    acqTax: document.getElementById('r-acq-tax').textContent,
-    eduTax: document.getElementById('r-edu-tax').textContent,
-    agriTax: document.getElementById('r-agri-tax').textContent,
-    regFee: document.getElementById('r-reg-fee').textContent,
-    stamp: document.getElementById('r-stamp').textContent,
-    bondBuy: document.getElementById('r-bond-buy').textContent,
-    bondDiscount: document.getElementById('r-bond-discount').textContent,
-    cert: document.getElementById('r-cert').textContent,
-    govTotal: document.getElementById('r-gov-total').textContent,
-    baseFee: document.getElementById('r-base-fee').textContent,
-    addlFee: document.getElementById('r-addl-fee').textContent,
-    confirm: document.getElementById('r-confirm').textContent,
-    origin: document.getElementById('r-origin').textContent,
-    tradeReport: document.getElementById('r-trade-report').textContent,
-    taxReport: document.getElementById('r-tax-report').textContent,
-    bondAgent: document.getElementById('r-bond-agent').textContent,
-    permit: document.getElementById('r-permit').textContent,
-    other: document.getElementById('r-other').textContent,
-    travel: document.getElementById('r-travel').textContent,
-    daily: document.getElementById('r-daily').textContent,
-    feeTotal: document.getElementById('r-fee-total').textContent,
-    vat: document.getElementById('r-vat').textContent,
-    grandTotal: document.getElementById('r-grand-total').textContent,
-    otherItems: otherItems,
+  const s = window._snap || {};
+  const d = {
+    caseName: document.getElementById('caseName').value||'등기 사건',
+    clientName: document.getElementById('clientName').value||'',
+    phone: document.getElementById('clientPhone').value||'',
+    manager: document.getElementById('manager').value||'정운영',
+    propertyDesc: document.getElementById('propertyDesc').value||'',
+    taxBase: pN('taxBase'), publicPrice: pN('pubPrice'),
+    bondDiscRate: document.getElementById('bondDiscRate').value,
+    bondRateStr: document.getElementById('bondRateDisp').value,
     date: new Date().toLocaleDateString('ko-KR'),
-    bondDiscountRate: document.getElementById('bondDiscountRate').value,
-    bondBuyRate: document.getElementById('bondBuyRate').value,
+    ...s,
   };
-
-  const win = window.open('', '_blank', 'width=800,height=1100');
-  win.document.write(generateReportHTML(data));
+  const win = window.open('','_blank','width=820,height=1150');
+  win.document.write(reportHTML(d));
   win.document.close();
-  setTimeout(() => win.print(), 500);
+  setTimeout(()=>win.print(),600);
 }
 
-function generateReportHTML(d) {
-  const today = d.date;
-  return `<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>비용내역서 - ${d.caseName}</title>
+function rrow(label, val, opt={}) {
+  const zero = val===0||val===undefined;
+  const colStyle = opt.color ? `style="color:${opt.color}"` : '';
+  return `<tr><td ${colStyle}>${label}</td><td class="r" ${colStyle}>${zero?'–':val.toLocaleString()+'원'}</td></tr>`;
+}
+
+function reportHTML(d) {
+  const bondNote = d.bondBuy>0 ? `<p class="fnote">※ 국민주택채권: 시가표준액 ${d.publicPrice.toLocaleString()}원 × ${d.bondRateStr}‰ = ${d.bondBuy.toLocaleString()}원 | 할인율 ${d.bondDiscRate}% (${d.date} 기준)</p>` : '';
+  const exemptRow = d.exempt>0 ? `<tr><td style="color:#277040">취득세 감면 (생애최초)</td><td class="r" style="color:#277040">▼ ${d.exempt.toLocaleString()}원</td></tr>` : '';
+  const otherFeeRows = d.otherItems ? d.otherItems.map(i=>`<tr><td>${i.name}</td><td class="r">${i.amt.toLocaleString()}원</td></tr>`).join('') : '';
+
+  return `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>비용내역서</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@600&display=swap" rel="stylesheet">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Noto Sans KR',sans-serif; font-size:12px; color:#111; background:white; padding:20px; }
-  .header { text-align:center; margin-bottom:20px; padding-bottom:12px; border-bottom:3px double #1a2744; }
-  .office-name { font-family:'Noto Serif KR',serif; font-size:22px; font-weight:600; color:#1a2744; }
-  .office-info { font-size:11px; color:#555; margin-top:6px; line-height:1.8; }
-  .doc-title { font-size:20px; font-weight:700; text-align:center; margin:14px 0 6px; letter-spacing:4px; }
-  .doc-date { text-align:right; font-size:11px; color:#555; margin-bottom:14px; }
-  table { width:100%; border-collapse:collapse; margin-bottom:10px; }
-  th, td { padding:7px 10px; font-size:12px; }
-  .info-table td:first-child { width:100px; font-weight:500; color:#1a2744; border-right:1px solid #ddd; background:#f8f8f5; }
-  .info-table td { border:1px solid #ddd; }
-  .section-header { background:#1a2744; color:white; font-weight:600; padding:8px 12px; font-size:12px; margin-top:12px; }
-  .fee-table th { background:#2a3a5c; color:white; text-align:left; font-size:11px; }
-  .fee-table td { border-bottom:1px solid #eee; }
-  .fee-table td.right { text-align:right; font-variant-numeric:tabular-nums; }
-  .fee-table tr.subtotal td { background:#f0f0ea; font-weight:700; }
-  .fee-table tr.total td { background:#1a2744; color:white; font-weight:700; font-size:14px; }
-  .fee-table tr.total td.right { color:#c9a84c; font-size:15px; }
-  .bond-note { font-size:10px; color:#777; margin-bottom:10px; }
-  .docs-section { margin-top:14px; padding-top:10px; border-top:2px solid #1a2744; }
-  .docs-section h3 { font-size:12px; font-weight:700; margin-bottom:6px; color:#1a2744; }
-  .docs-list { font-size:11px; line-height:2; }
-  .bank-info { margin-top:14px; padding:10px 14px; background:#f8f6f0; border:1px solid #ddd; border-radius:4px; }
-  .bank-info .label { font-size:10px; color:#777; margin-bottom:4px; }
-  .bank-info .account { font-size:14px; font-weight:700; color:#1a2744; }
-  .note-section { margin-top:10px; font-size:10px; color:#777; line-height:1.8; }
-  @media print { body { padding:10px; } }
-</style>
-</head>
-<body>
-<div class="header">
-  <div class="office-name">⚖ 정운영 법무사 사무소</div>
-  <div class="office-info">
-    전화 02-997-8817 &nbsp;|&nbsp; 팩스 0504-210-8817<br>
-    서울특별시 강북구 도봉로 327, 302호 (수유동)
-  </div>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans KR',sans-serif;font-size:11.5px;color:#111;background:#fff;padding:22px 28px}
+.hd{text-align:center;padding-bottom:14px;border-bottom:3px double #1a2744;margin-bottom:14px}
+.on{font-family:'Noto Serif KR',serif;font-size:21px;font-weight:600;color:#1a2744}
+.oi{font-size:11px;color:#555;margin-top:5px;line-height:1.9}
+.title{font-size:20px;font-weight:700;text-align:center;margin:10px 0 4px;letter-spacing:5px}
+.dd{text-align:right;font-size:11px;color:#666;margin-bottom:12px}
+.it{width:100%;border-collapse:collapse;margin-bottom:10px}
+.it td{border:1px solid #ddd;padding:6px 10px;font-size:11.5px}
+.it td.lb{width:88px;font-weight:600;color:#1a2744;background:#f8f7f3;border-right:1px solid #ddd}
+.sh{background:#1a2744;color:#fff;font-weight:600;padding:7px 12px;font-size:11.5px;margin-top:12px}
+.mt{width:100%;border-collapse:collapse;font-size:11.5px}
+.mt th{background:#2a3a5c;color:#fff;padding:7px 10px;text-align:left;font-weight:500}
+.mt td{padding:5px 10px;border-bottom:1px solid #eee}
+.mt td.r{text-align:right;font-variant-numeric:tabular-nums}
+.mt tr.sub td{background:#f0efe9;font-weight:700}
+.mt tr.tot td{background:#1a2744;color:#fff;font-weight:700;font-size:13px}
+.mt tr.tot td.r{color:#c9a84c;font-size:15px}
+.bank{margin-top:11px;padding:8px 14px;background:#f8f6f0;border:1px solid #ddd;border-radius:4px}
+.bank .bl{font-size:10px;color:#777;margin-bottom:3px}.bank .ba{font-size:14px;font-weight:700;color:#1a2744}
+.docs{margin-top:12px;padding-top:10px;border-top:2px solid #1a2744}
+.docs h3{font-size:12px;font-weight:700;color:#1a2744;margin-bottom:5px}
+.docs p{font-size:11px;line-height:2;margin-bottom:3px}
+.fnote{font-size:10px;color:#777;margin:6px 0;line-height:1.8}
+@media print{body{padding:10px 14px}}
+</style></head><body>
+<div class="hd">
+  <div class="on">⚖ 정운영 법무사 사무소</div>
+  <div class="oi">전화 02-997-8817 &nbsp;|&nbsp; 팩스 0504-210-8817 &nbsp;|&nbsp; 서울특별시 강북구 도봉로 327, 302호 (수유동)</div>
 </div>
-
-<div class="doc-title">비 용 내 역 서</div>
-<div class="doc-date">작성일: ${today}</div>
-
-<table class="info-table">
-  <tr><td>사건명</td><td>${d.caseName}</td><td>진행담당자</td><td>${d.manager}</td></tr>
-  <tr><td>의뢰인</td><td>${d.clientName}</td><td>전화번호</td><td>${d.phone}</td></tr>
-  <tr><td>부동산표시</td><td colspan="3">${d.propertyDesc || '-'}</td></tr>
-  ${d.taxBase > 0 ? `<tr><td>과세표준액</td><td>${d.taxBase.toLocaleString()}원</td><td>주택공시가격</td><td>${d.publicPrice.toLocaleString()}원</td></tr>` : ''}
+<div class="title">비 용 내 역 서</div>
+<div class="dd">작성일: ${d.date}</div>
+<table class="it">
+  <tr><td class="lb">사건명</td><td>${d.caseName}</td><td class="lb">진행담당자</td><td>${d.manager}</td></tr>
+  <tr><td class="lb">의뢰인</td><td>${d.clientName||'–'}</td><td class="lb">전화번호</td><td>${d.phone||'–'}</td></tr>
+  ${d.propertyDesc?`<tr><td class="lb">부동산표시</td><td colspan="3">${d.propertyDesc}</td></tr>`:''}
+  ${d.taxBase>0?`<tr><td class="lb">의뢰가액</td><td>${d.taxBase.toLocaleString()}원</td><td class="lb">주택공시가격</td><td>${d.publicPrice>0?d.publicPrice.toLocaleString()+'원':'–'}</td></tr>`:''}
 </table>
-
-${d.bondBuy !== '0원' ? `<div class="bond-note">
-  [ 국민주택채권 매입 계산 ] 주택공시가격 × ${d.bondBuyRate}‰ = ${d.bondBuy} / 
-  채권할인율 ${d.bondDiscountRate}% 적용 (${today})
-</div>` : ''}
-
-<div class="section-header">공과금 및 보수액 내역</div>
-<table class="fee-table">
-  <thead><tr><th>공과금 항목</th><th style="text-align:right">금액</th><th>보수 항목</th><th style="text-align:right">금액</th></tr></thead>
-  <tbody>
-    <tr><td>취득세</td><td class="right">${d.acqTax}</td><td>기본보수</td><td class="right">${d.baseFee}</td></tr>
-    <tr><td>교육세</td><td class="right">${d.eduTax}</td><td>가산보수</td><td class="right">${d.addlFee}</td></tr>
-    <tr><td>농어촌특별세</td><td class="right">${d.agriTax}</td><td>확인서면</td><td class="right">${d.confirm}</td></tr>
-    <tr><td>등기신청수수료</td><td class="right">${d.regFee}</td><td>원인증서작성</td><td class="right">${d.origin}</td></tr>
-    <tr><td>인지</td><td class="right">${d.stamp}</td><td>검인/부동산거래신고</td><td class="right">${d.tradeReport}</td></tr>
-    <tr><td>국민주택채권</td><td class="right">${d.bondBuy}</td><td>지방세신고대행</td><td class="right">${d.taxReport}</td></tr>
-    <tr><td>채권할인비용</td><td class="right">${d.bondDiscount}</td><td>채권매입대행</td><td class="right">${d.bondAgent}</td></tr>
-    <tr><td>등본등제증명</td><td class="right">${d.cert}</td><td>허가승낙서류작성</td><td class="right">${d.permit}</td></tr>
-    <tr><td></td><td></td><td>기타업무대행</td><td class="right">${d.other}</td></tr>
-    <tr><td></td><td></td><td>교통비</td><td class="right">${d.travel}</td></tr>
-    <tr><td></td><td></td><td>일당</td><td class="right">${d.daily}</td></tr>
-    ${d.otherItems.map(item => `<tr><td></td><td></td><td>${item.name}</td><td class="right">${item.amt.toLocaleString()}원</td></tr>`).join('')}
-    <tr class="subtotal"><td>공과금 소계 ①</td><td class="right">${d.govTotal}</td><td>보수액 소계 ②</td><td class="right">${d.feeTotal}</td></tr>
-  </tbody>
-</table>
-<table class="fee-table">
-  <tbody>
-    <tr class="subtotal"><td colspan="3">부가가치세 ③ (보수의 10%)</td><td class="right">${d.vat}</td></tr>
-    <tr class="total"><td colspan="3">합계 (①+②+③)</td><td class="right">${d.grandTotal}</td></tr>
-  </tbody>
-</table>
-
-<div class="bank-info">
-  <div class="label">비용 입금 계좌</div>
-  <div class="account">신한은행 110-571-241539 (예금주: 정운영)</div>
-</div>
-
-<div class="docs-section">
-  <h3>구비서류</h3>
-  <div class="docs-list">
-    <b>〈매도인(등기의무자)〉</b><br>
-    1. 등기필증(등기필정보) : 분실시 확인서면 작성을 위해 신분증사본과 확인서면상에 우무인 날인<br>
-    2. 매도용 인감증명서 1통 : 매수인란엔 매수인의 성명, 주민등록번호, 주소 기재<br>
-    3. 주민(법인)등록초본 1통 : 주소이력사항 포함 &nbsp; 4. 인감도장<br>
-    <b>〈매수인(등기권리자)〉</b><br>
-    1. 주민(법인)등록등본 1통 &nbsp; 2. 도장 : 인감도장 아니어도 무방 &nbsp; 3. 가족관계증명서 1통(취득세신고용)<br>
-    <b>〈기타서류〉</b><br>
-    1. 토지대장, 건축물관리대장 &nbsp; 2. 부동산거래계약신고필증 &nbsp; 3. 매매계약서 등
-  </div>
-</div>
-
-<div class="note-section">
-  ※ 법무사보수기준에 의한 법무사의 보수에는 부가가치세가 포함되지 아니합니다.<br>
-  ※ 기타 부동산 거래의 성격에 따라 추가적인 서류가 발생할 수 있습니다. (농지취득자격증명, 토지거래허가증 등)<br>
-  ※ 본 내역서는 2024년 법무사 보수표 기준으로 작성되었습니다.
-</div>
-</body>
-</html>`;
+${bondNote}
+<div class="sh">공과금 및 보수액 내역</div>
+<table class="mt">
+<thead><tr><th>공과금 항목</th><th style="text-align:right">금액</th><th>보수 항목</th><th style="text-align:right">금액</th></tr></thead>
+<tbody>
+<tr><td>취득세/등록면허세</td><td class="r">${d.acq>0?d.acq.toLocaleString()+'원':'–'}</td><td>기본보수</td><td class="r">${d.base>0?d.base.toLocaleString()+'원':'–'}</td></tr>
+<tr><td>농어촌특별세</td><td class="r">${d.agri>0?d.agri.toLocaleString()+'원':'–'}</td><td>가산보수</td><td class="r">${d.addl>0?d.addl.toLocaleString()+'원':'–'}</td></tr>
+<tr><td>지방교육세</td><td class="r">${d.edu>0?d.edu.toLocaleString()+'원':'–'}</td><td>확인서면</td><td class="r">${d.confirm>0?d.confirm.toLocaleString()+'원':'–'}</td></tr>
+${d.exempt>0?`<tr><td style="color:#277040">취득세 감면</td><td class="r" style="color:#277040">▼ ${d.exempt.toLocaleString()}원</td><td>원인증서작성</td><td class="r">${d.origin>0?d.origin.toLocaleString()+'원':'–'}</td></tr>`:
+`<tr><td></td><td></td><td>원인증서작성</td><td class="r">${d.origin>0?d.origin.toLocaleString()+'원':'–'}</td></tr>`}
+<tr><td>등기신청수수료</td><td class="r">${d.regGov>0?d.regGov.toLocaleString()+'원':'–'}</td><td>검인/부동산거래신고</td><td class="r">${d.trade>0?d.trade.toLocaleString()+'원':'–'}</td></tr>
+<tr><td>인지세</td><td class="r">${d.stamp>0?d.stamp.toLocaleString()+'원':'–'}</td><td>지방세신고대행</td><td class="r">${d.taxrpt>0?d.taxrpt.toLocaleString()+'원':'–'}</td></tr>
+<tr><td>국민주택채권</td><td class="r">${d.bondBuy>0?d.bondBuy.toLocaleString()+'원':'–'}</td><td>채권매입대행</td><td class="r">${d.bondagt>0?d.bondagt.toLocaleString()+'원':'–'}</td></tr>
+<tr><td style="font-size:10.5px;color:#777">└ 즉시매도 할인</td><td class="r" style="color:#277040">${d.bondDisc>0?'▼ '+d.bondDisc.toLocaleString()+'원':'–'}</td><td>허가승낙서류작성</td><td class="r">${d.permit>0?d.permit.toLocaleString()+'원':'–'}</td></tr>
+<tr><td>등본등제증명</td><td class="r">${d.certGov>0?d.certGov.toLocaleString()+'원':'–'}</td><td>기타업무대행</td><td class="r">${d.otherdeed>0?d.otherdeed.toLocaleString()+'원':'–'}</td></tr>
+<tr><td></td><td></td><td>교통비</td><td class="r">${d.travelAmt>0?d.travelAmt.toLocaleString()+'원':'–'}</td></tr>
+<tr><td></td><td></td><td>일당</td><td class="r">${d.dailyAmt>0?d.dailyAmt.toLocaleString()+'원':'–'}</td></tr>
+${otherFeeRows}
+<tr class="sub"><td>공과금 소계 ①</td><td class="r">${(d.govTotal||0).toLocaleString()}원</td><td>보수액 소계 ②</td><td class="r">${(d.feeTotal||0).toLocaleString()}원</td></tr>
+</tbody></table>
+<table class="mt"><tbody>
+<tr class="sub"><td colspan="3">부가가치세 ③ (보수액의 10%)</td><td class="r">${(d.vat||0).toLocaleString()}원</td></tr>
+<tr class="tot"><td colspan="3">합 계 (①+②+③)</td><td class="r">${(d.grand||0).toLocaleString()}원</td></tr>
+</tbody></table>
+<div class="bank"><div class="bl">비용 입금 계좌</div><div class="ba">신한은행 110-571-241539 (예금주: 정운영)</div></div>
+<div class="docs"><h3>구 비 서 류</h3>
+<p><b>〈매도인(등기의무자)〉</b><br>
+1. 등기필증(등기필정보) — 분실시 확인서면 작성 위해 신분증사본 및 확인서면상 우무인 날인<br>
+2. 매도용 인감증명서 1통 — 매수인란에 매수인 성명·주민등록번호·주소 기재<br>
+3. 주민(법인)등록초본 1통 — 주소이력 포함 &nbsp; 4. 인감도장</p>
+<p><b>〈매수인(등기권리자)〉</b><br>
+1. 주민(법인)등록등본 1통 &nbsp; 2. 도장 (인감 아니어도 무방) &nbsp; 3. 가족관계증명서 1통(취득세신고용)</p>
+<p><b>〈기타서류〉</b><br>
+1. 토지대장, 건축물관리대장 &nbsp; 2. 부동산거래계약신고필증 &nbsp; 3. 매매계약서 등<br>
+♣ 농지취득자격증명, 토지거래허가증 등 추가 서류 발생 가능</p>
+<p class="fnote">※ 법무사 보수에는 부가가치세가 포함되지 않습니다. &nbsp; ※ 본 내역서는 2024년 법무사 보수표 기준입니다.</p>
+</div></body></html>`;
 }
 
-// Init
-document.addEventListener('DOMContentLoaded', () => {
-  calculateAll();
-});
+// 초기화
+window.addEventListener('DOMContentLoaded', ()=>{ onRegChange(); renderItems(); calcAll(); });
 </script>
 </body>
 </html>
