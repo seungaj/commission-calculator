@@ -232,10 +232,10 @@ input[readonly]{background:var(--gl);color:var(--gray)}
   <div class="fr">
     <div class="fg">
       <label>과세표준액(매매가/신고가) <span class="req">*</span></label>
-      <div class="iw"><input type="text" id="taxBase" placeholder="72,724,522" oninput="onTaxBaseInput(this)"><span class="iu">원</span></div>
+      <div class="iw"><input type="text" id="taxBase" placeholder="0" oninput="onTaxBaseInput(this)"><span class="iu">원</span></div>
     </div>
     <div class="fg">
-      <label>인지세 <span class="ht2">1억 이하 면제, 자동계산</span></label>
+      <label>인지세 <span class="ht2">자동계산 (주택 1억 이하 비과세)</span></label>
       <div class="iw"><input type="text" id="stampTax" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
     </div>
   </div>
@@ -284,7 +284,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     <div class="fr">
       <div class="fg">
         <label>시가표준액 (주택공시가격) <span class="req">*</span></label>
-        <div class="iw"><input type="text" id="pubPrice" placeholder="24,412" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
+        <div class="iw"><input type="text" id="pubPrice" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
       </div>
       <div class="fg">
         <label>자동 산출 채권매입율</label>
@@ -333,17 +333,17 @@ input[readonly]{background:var(--gl);color:var(--gray)}
 <!-- 실비 -->
 <div class="st" style="margin-top:12px">실비 및 등기비용</div>
 <div class="fr3">
-  <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel" value="80,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   <div class="fg"><label>일당</label>
     <select id="daily" onchange="calcAll()">
-      <option value="0">없음</option>
-      <option value="80000" selected>80,000원 (4시간 이내)</option>
+      <option value="0" selected>없음</option>
+      <option value="80000">80,000원 (4시간 이내)</option>
       <option value="160000">160,000원 (4시간 초과)</option>
     </select>
   </div>
-  <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee" value="36,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
 </div>
-<div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+<div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
 </div><!-- end tab-re -->
 
 <!-- ===== 상업·법인 등기 ===== -->
@@ -366,8 +366,8 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     <div class="fg"><label>납입(출자)금액</label><div class="iw"><input type="text" id="comAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   </div>
   <div class="fr">
-    <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee_com" value="36,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
-    <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_com" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   </div>
 </div>
 
@@ -561,15 +561,20 @@ function renderBondRef(cat, region) {
 }
 
 // =====================================================
-// 인지세 (부동산·주택 1억 이하 면제)
+// 인지세 (인지세법 제3조, 제6조 기준 2024)
+// 부동산·선박·항공기 소유권 이전 증서
+// 제6조5호: 주택 소유권 이전 1억 이하 비과세
 // =====================================================
-function stampTax(amt) {
-  if (amt <= 100000000) return 0;
-  if (amt <= 300000000) return 20000;
-  if (amt <= 500000000) return 40000;
-  if (amt <= 1000000000) return 70000;
-  if (amt <= 10000000000) return 150000;
-  return 350000;
+function stampTax(amt, isHousing) {
+  // 주택: 1억 이하 비과세
+  if (isHousing && amt <= 100000000) return 0;
+  // 일반 부동산: 1천만 이하 비과세
+  if (amt <= 10000000) return 0;
+  if (amt <= 30000000) return 20000;   // 1천만 초과~3천만 이하
+  if (amt <= 50000000) return 40000;   // 3천만 초과~5천만 이하
+  if (amt <= 100000000) return 70000;  // 5천만 초과~1억 이하
+  if (amt <= 1000000000) return 150000; // 1억 초과~10억 이하
+  return 350000;                        // 10억 초과
 }
 
 // =====================================================
@@ -745,12 +750,18 @@ function onRegChange() {
     if (v==='상속농지') idesc.textContent = '농지 상속: 취득세 2.3% + 지방교육세 0.16%';
   }
   calcAll();
+  // regType 변경 시 인지세도 재계산
+  const amt = pN('taxBase');
+  const isHousing = ['매매주택','법인주택','증여주택'].includes(v);
+  const st = stampTax(amt, isHousing);
+  document.getElementById('stampTax').value = st > 0 ? st.toLocaleString() : '0';
+  calcAll();
 }
-
-function onTaxBaseInput(el) {
   fmtN(el);
   const amt = pN('taxBase');
-  const st = stampTax(amt);
+  const regType = document.getElementById('regType')?.value || '';
+  const isHousing = regType.includes('주택') || regType === '매매주택' || regType === '법인주택' || regType === '증여주택';
+  const st = stampTax(amt, isHousing);
   document.getElementById('stampTax').value = st > 0 ? st.toLocaleString() : '0';
   calcAll();
 }
