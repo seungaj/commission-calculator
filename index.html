@@ -322,10 +322,10 @@ input[readonly]{background:var(--gl);color:var(--gray)}
 <div class="st" style="margin-top:8px">대행 서비스 선택</div>
 <div class="cg" style="gap:7px 16px">
   <label><input type="checkbox" id="chk_confirm" onchange="calcAll()"> 확인서면 (120,000원)</label>
-  <label><input type="checkbox" id="chk_origin" checked onchange="calcAll()"> 원인증서 작성 (50,000원)</label>
+  <label><input type="checkbox" id="chk_origin" onchange="calcAll()"> 원인증서 작성 (50,000원)</label>
   <label><input type="checkbox" id="chk_trade" onchange="calcAll()"> 부동산거래신고 (50,000원)</label>
-  <label><input type="checkbox" id="chk_taxrpt" checked onchange="calcAll()"> 지방세신고 대행 (50,000원)</label>
-  <label><input type="checkbox" id="chk_bondagt" checked onchange="calcAll()"> 채권매입 대행 (40,000원)</label>
+  <label><input type="checkbox" id="chk_taxrpt" onchange="calcAll()"> 지방세신고 대행 (50,000원)</label>
+  <label><input type="checkbox" id="chk_bondagt" onchange="calcAll()"> 채권매입 대행 (40,000원)</label>
   <label><input type="checkbox" id="chk_permit" onchange="calcAll()"> 허가·승낙서류 (50,000원)</label>
   <label><input type="checkbox" id="chk_otherdeed" onchange="calcAll()"> 기타업무 대행 (40,000원)</label>
 </div>
@@ -363,11 +363,21 @@ input[readonly]{background:var(--gl);color:var(--gray)}
         <option value="외국영업소">외국회사 영업소 설치 (280,000원)</option>
       </select>
     </div>
-    <div class="fg"><label>납입(출자)금액</label><div class="iw"><input type="text" id="comAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>납입(출자)금액 <span class="ht2">설립·자본변경 시</span></label><div class="iw"><input type="text" id="comAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   </div>
   <div class="fr">
     <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
     <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>일당</label>
+      <select id="daily_com" onchange="calcAll()">
+        <option value="0" selected>없음</option>
+        <option value="80000">80,000원 (4시간 이내)</option>
+        <option value="160000">160,000원 (4시간 초과)</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -383,7 +393,21 @@ input[readonly]{background:var(--gl);color:var(--gray)}
         <option value="simple">기일변경·판결확정·집행문부여 등 (40,000원)</option>
       </select>
     </div>
-    <div class="fg"><label>소송물가액</label><div class="iw"><input type="text" id="litAmt" placeholder="50,000,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>소송물가액</label><div class="iw"><input type="text" id="litAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  </div>
+  <div class="fr">
+    <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>일당</label>
+      <select id="daily_lit" onchange="calcAll()">
+        <option value="0" selected>없음</option>
+        <option value="80000">80,000원 (4시간 이내)</option>
+        <option value="160000">160,000원 (4시간 초과)</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -426,7 +450,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     </div>
     <div class="fg"><label>가산율 <span class="ht2">기본보수 대비 %</span></label><div class="iw"><input type="number" id="addlRate" value="0" min="0" max="100" oninput="calcAll()"><span class="iu">%</span></div></div>
   </div>
-  <div class="fg"><label>고정 가산보수 <span class="ht2">비율 계산과 별도 추가</span></label><div class="iw"><input type="text" id="addlFixed" value="20,000" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>고정 가산보수 <span class="ht2">비율 계산과 별도 추가</span></label><div class="iw"><input type="text" id="addlFixed" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
 </div>
 </div>
 </div><!-- left col end -->
@@ -757,10 +781,12 @@ function onRegChange() {
   document.getElementById('stampTax').value = st > 0 ? st.toLocaleString() : '0';
   calcAll();
 }
+
+function onTaxBaseInput(el) {
   fmtN(el);
   const amt = pN('taxBase');
   const regType = document.getElementById('regType')?.value || '';
-  const isHousing = regType.includes('주택') || regType === '매매주택' || regType === '법인주택' || regType === '증여주택';
+  const isHousing = ['매매주택','법인주택','증여주택'].includes(regType);
   const st = stampTax(amt, isHousing);
   document.getElementById('stampTax').value = st > 0 ? st.toLocaleString() : '0';
   calcAll();
@@ -902,13 +928,19 @@ function calcAll() {
     const type = document.getElementById('comType').value;
     const amt  = pN('comAmt');
     base = type ? commercialFee(type, amt) : 0;
-    regGov  = pN('regFee_com');
-    certGov = pN('certFee_com');
+    regGov    = pN('regFee_com');
+    certGov   = pN('certFee_com');
+    travelAmt = pN('travel_com');
+    dailyAmt  = parseInt(document.getElementById('daily_com').value)||0;
 
   } else if (tab === 'tab-lit') {
     const type = document.getElementById('litType').value;
     const amt  = pN('litAmt');
     base = type ? litigationFee(type, amt) : 0;
+    regGov    = pN('regFee_lit');
+    certGov   = pN('certFee_lit');
+    travelAmt = pN('travel_lit');
+    dailyAmt  = parseInt(document.getElementById('daily_lit').value)||0;
   }
 
   // 가산보수
@@ -973,17 +1005,17 @@ function pNd(v) { return parseInt(String(v).replace(/[^0-9]/g,''))||0; }
 function resetAll() {
   if (!confirm('모든 입력값을 초기화하겠습니까?')) return;
   ['caseName','clientName','clientPhone','propertyDesc','taxBase','mortAmt','pubPrice','comAmt','litAmt'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  document.getElementById('stampTax').value='0';
-  document.getElementById('travel').value='80,000';
-  document.getElementById('regFee').value='36,000';
-  document.getElementById('certFee').value='20,000';
+  ['stampTax','travel','regFee','certFee','travel_com','regFee_com','certFee_com','travel_lit','regFee_lit','certFee_lit'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0';});
   document.getElementById('bondDiscRate').value='12.84181';
-  document.getElementById('addlFixed').value='20,000';
+  document.getElementById('addlFixed').value='0';
   document.getElementById('addlRate').value='0';
   document.getElementById('regType').value='';
   document.getElementById('houseCount').value='1';
   document.getElementById('exemptType').value='';
-  ['chk_origin','chk_taxrpt','chk_bondagt'].forEach(id=>document.getElementById(id).checked=true);
+  document.getElementById('daily').value='0';
+  document.getElementById('daily_com').value='0';
+  document.getElementById('daily_lit').value='0';
+  ['chk_origin','chk_taxrpt','chk_bondagt'].forEach(id=>document.getElementById(id).checked=false);
   ['chk_confirm','chk_trade','chk_permit','chk_otherdeed'].forEach(id=>document.getElementById(id).checked=false);
   otherItems.length=0; renderItems(); onRegChange(); calcAll();
 }
