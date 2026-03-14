@@ -111,6 +111,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
   <button class="tb active" onclick="switchTab('re')">🏠 부동산 등기</button>
   <button class="tb" onclick="switchTab('com')">🏢 상업·법인 등기</button>
   <button class="tb" onclick="switchTab('lit')">⚖️ 송무·비송·집행</button>
+  <button class="tb" onclick="switchTab('bank')">💳 개인파산·회생</button>
   <button class="tb" onclick="switchTab('oth')">📋 기타 대행</button>
 </div>
 
@@ -333,7 +334,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
 <!-- 실비 -->
 <div class="st" style="margin-top:12px">실비 및 등기비용</div>
 <div class="fr3">
-  <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>교통비 <span class="ht2">현지교통 80,000원 한도</span></label><div class="iw"><input type="text" id="travel" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   <div class="fg"><label>일당</label>
     <select id="daily" onchange="calcAll()">
       <option value="0" selected>없음</option>
@@ -341,9 +342,12 @@ input[readonly]{background:var(--gl);color:var(--gray)}
       <option value="160000">160,000원 (4시간 초과)</option>
     </select>
   </div>
-  <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>숙박비 <span class="ht2">1급 숙박업소 기준 실비</span></label><div class="iw"><input type="text" id="lodging" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
 </div>
-<div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+<div class="fr">
+  <div class="fg"><label>등기신청수수료</label><div class="iw"><input type="text" id="regFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+  <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+</div>
 </div><!-- end tab-re -->
 
 <!-- ===== 상업·법인 등기 ===== -->
@@ -370,7 +374,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   </div>
   <div class="fr">
-    <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>교통비 <span class="ht2">현지교통 80,000원 한도</span></label><div class="iw"><input type="text" id="travel_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
     <div class="fg"><label>일당</label>
       <select id="daily_com" onchange="calcAll()">
         <option value="0" selected>없음</option>
@@ -379,6 +383,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
       </select>
     </div>
   </div>
+  <div class="fg"><label>숙박비 <span class="ht2">1급 숙박업소 기준 실비</span></label><div class="iw"><input type="text" id="lodging_com" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
 </div>
 
 <!-- ===== 송무·비송 ===== -->
@@ -400,9 +405,40 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     <div class="fg"><label>등본 등 제증명</label><div class="iw"><input type="text" id="certFee_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
   </div>
   <div class="fr">
-    <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>교통비 <span class="ht2">현지교통 80,000원 한도</span></label><div class="iw"><input type="text" id="travel_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
     <div class="fg"><label>일당</label>
       <select id="daily_lit" onchange="calcAll()">
+        <option value="0" selected>없음</option>
+        <option value="80000">80,000원 (4시간 이내)</option>
+        <option value="160000">160,000원 (4시간 초과)</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg"><label>숙박비 <span class="ht2">1급 숙박업소 기준 실비</span></label><div class="iw"><input type="text" id="lodging_lit" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+</div>
+
+<!-- ===== 개인파산·회생 ===== -->
+<div id="tab-bank" class="tc">
+  <div class="ib">📌 채무금액 기준으로 보수를 산정합니다. (2024 보수표 VIII조)</div>
+  <div class="fr">
+    <div class="fg"><label>사건 종류</label>
+      <select id="bankType" onchange="calcAll()">
+        <option value="">선택하세요</option>
+        <option value="회생">개인회생</option>
+        <option value="파산">개인파산</option>
+      </select>
+    </div>
+    <div class="fg"><label>채무금액 <span class="req">*</span></label>
+      <div class="iw"><input type="text" id="bankAmt" placeholder="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div>
+    </div>
+  </div>
+  <div id="bankBracketInfo" style="font-size:11px;color:var(--gray);padding:4px 0 8px;line-height:1.8">
+    5천만원까지 1,030,000원 | 5천만~3억 +8/10,000 | 3억~5억 +7/10,000 | 5억~10억 +5/10,000 | 10억 초과 +4/10,000
+  </div>
+  <div class="fr">
+    <div class="fg"><label>교통비</label><div class="iw"><input type="text" id="travel_bank" value="0" oninput="fmtN(this);calcAll()"><span class="iu">원</span></div></div>
+    <div class="fg"><label>일당</label>
+      <select id="daily_bank" onchange="calcAll()">
         <option value="0" selected>없음</option>
         <option value="80000">80,000원 (4시간 이내)</option>
         <option value="160000">160,000원 (4시간 초과)</option>
@@ -413,7 +449,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
 
 <!-- ===== 기타 대행 ===== -->
 <div id="tab-oth" class="tc">
-  <div class="ib">📌 기타 대행 업무 항목을 자유롭게 추가하세요.</div>
+  <div class="ib">📌 기타 대행 업무 항목을 자유롭게 추가하세요. (2024 보수표 제IX조 기준)</div>
   <table class="dt" style="margin-bottom:12px">
     <thead><tr><th>항목명</th><th style="text-align:right">금액</th><th></th></tr></thead>
     <tbody id="otherBody"></tbody>
@@ -421,13 +457,29 @@ input[readonly]{background:var(--gl);color:var(--gray)}
   <div class="fr">
     <div class="fg"><label>항목 선택</label>
       <select id="addType" onchange="onAddTypeChange()">
-        <option value="상담개별">개별 상담·자문 (150,000원)</option>
-        <option value="상담계속">계속 상담·자문 월액 (600,000원)</option>
-        <option value="계약서작성">계약서 등 문서 작성 (80,000원)</option>
-        <option value="공증">공증 대행 (50,000원)</option>
-        <option value="법인인감카드">법인인감카드 발급 대행 (40,000원)</option>
-        <option value="법원제출">법원 서류 제출 대행 (40,000원)</option>
-        <option value="custom">직접 입력</option>
+        <optgroup label="── 대행업무 (IX) ──">
+          <option value="원인증서작성">① 등기원인증서 작성·검인 대행 (50,000원)</option>
+          <option value="부동산거래신고">① 부동산거래 신고 대행 (50,000원)</option>
+          <option value="지방세신고">② 취득세·등록면허세 신고·납부 대행 (50,000원)</option>
+          <option value="채권매입">③ 국민주택채권 매입·즉시매도 대행 (40,000원)</option>
+          <option value="허가승낙서류">④ 허가·동의·승낙 서류 작성 대행 (50,000원)</option>
+          <option value="정관의사록">⑤ 정관·의사록·내용증명 등 작성 대행 (80,000원)</option>
+          <option value="공증">⑥ 공증 대행 (50,000원)</option>
+          <option value="법인인감카드">⑦ 법인인감카드 발급 대행 (40,000원)</option>
+          <option value="법원제출">⑧ 법원·검찰청 서류 제출 대행 (40,000원)</option>
+          <option value="기록열람">⑨ 사건기록 열람 대행 (40,000원)</option>
+          <option value="송달영수">⑩ 법원·검찰 송달 서류 영수 대행 (50,000원)</option>
+          <option value="확정일자">⑪ 확정일자 날인·내용증명 발송 대행 (50,000원)</option>
+          <option value="등기증명">⑫ 등기사항증명서 발급·열람 대행 (3,000원)</option>
+          <option value="기타업무">⑬ 기타 수임사건 관련 업무 대행 (40,000원)</option>
+        </optgroup>
+        <optgroup label="── 상담 (X) ──">
+          <option value="상담개별">개별 상담·자문 (150,000원)</option>
+          <option value="상담계속">계속 상담·자문 월액 (600,000원)</option>
+        </optgroup>
+        <optgroup label="──────────────">
+          <option value="custom">직접 입력</option>
+        </optgroup>
       </select>
     </div>
     <div class="fg" id="custAmtGrp" style="display:none"><label>직접 입력 금액</label><div class="iw"><input type="text" id="custAmt" placeholder="0" oninput="fmtN(this)"><span class="iu">원</span></div></div>
@@ -486,6 +538,7 @@ input[readonly]{background:var(--gl);color:var(--gray)}
     <div class="rr"><span class="lb">기타업무 대행</span><span class="vl" id="R_otherdeed">0원</span></div>
     <div class="rr"><span class="lb">교통비</span><span class="vl" id="R_travel">0원</span></div>
     <div class="rr"><span class="lb">일당</span><span class="vl" id="R_daily">0원</span></div>
+    <div class="rr"><span class="lb">숙박비</span><span class="vl" id="R_lodging">0원</span></div>
     <div id="R_otherlist"></div>
     <div class="sub"><span>보수액 소계 ②</span><span id="R_feetotal">0원</span></div>
   </div>
@@ -723,6 +776,8 @@ const BR_EST = [[50000000,420000,0],[100000000,420000,22/10000],[300000000,53000
 const BR_CAP = [[50000000,300000,0],[100000000,300000,19/10000],[300000000,395000,8/10000],[500000000,555000,7/10000],[1000000000,695000,6/10000],[2000000000,995000,5/10000],[20000000000,1495000,4/10000],[Infinity,8695000,1/10000]];
 const BR_LIT_A = [[30000000,560000,0],[200000000,560000,10/10000],[500000000,730000,9/10000],[1000000000,1000000,4/10000],[2000000000,1200000,3/10000],[Infinity,1500000,1/10000]];
 const BR_LIT_B = [[30000000,260000,0],[200000000,260000,1/10000],[500000000,277000,5/10000],[1000000000,427000,4/10000],[2000000000,627000,2/10000],[Infinity,827000,1/10000]];
+// VIII. 개인파산·개인회생 (2024 보수표)
+const BR_BANK = [[50000000,1030000,0],[300000000,1030000,8/10000],[500000000,1230000,7/10000],[1000000000,1370000,5/10000],[Infinity,1620000,4/10000]];
 
 const FIXED = {'근저당말소':80000,'주소변경':40000,'명의변경':40000,'말소등기':80000,'권리변경':120000,'임원변경':100000,'본점이전':120000,'지점설치':120000,'해산청산':120000,'합병무증자':180000,'외국영업소':280000};
 
@@ -752,7 +807,7 @@ function litigationFee(type, amt) {
 // UI
 // =====================================================
 function switchTab(t) {
-  ['re','com','lit','oth'].forEach((id,i) => {
+  ['re','com','lit','bank','oth'].forEach((id,i) => {
     document.querySelectorAll('.tb')[i].classList.toggle('active', id===t);
     document.getElementById('tab-'+id).classList.toggle('active', id===t);
   });
@@ -804,9 +859,25 @@ function onBondCatChange() {
 // =====================================================
 const otherItems = [];
 const PRESETS = {
-  '상담개별':{name:'개별 상담·자문',amt:150000},'상담계속':{name:'계속 상담·자문(월액)',amt:600000},
-  '계약서작성':{name:'계약서 등 문서 작성',amt:80000},'공증':{name:'공증 대행',amt:50000},
-  '법인인감카드':{name:'법인인감카드 발급 대행',amt:40000},'법원제출':{name:'법원 서류 제출 대행',amt:40000},
+  // IX. 기타 대행업무 보수 (2024.9.12 시행 보수표)
+  '원인증서작성':   {name:'등기원인증서 작성·검인 대행',amt:50000},
+  '부동산거래신고': {name:'부동산거래 신고 대행',amt:50000},
+  '지방세신고':     {name:'취득세·등록면허세 신고·납부 대행',amt:50000},
+  '채권매입':       {name:'국민주택채권 매입·즉시매도 대행',amt:40000},
+  '허가승낙서류':   {name:'허가·동의·승낙 서류 작성 대행',amt:50000},
+  '정관의사록':     {name:'정관·의사록·내용증명 등 작성 대행',amt:80000},
+  '공증':           {name:'공증 대행',amt:50000},
+  '법인인감카드':   {name:'법인인감카드 발급 대행',amt:40000},
+  '법원제출':       {name:'법원·검찰청 서류 제출 대행',amt:40000},
+  '기록열람':       {name:'사건기록 열람 대행',amt:40000},
+  '송달영수':       {name:'법원·검찰 송달 서류 영수 대행',amt:50000},
+  '확정일자':       {name:'확정일자 날인·내용증명 발송 대행',amt:50000},
+  '등기증명':       {name:'등기사항증명서 발급·열람 대행',amt:3000},
+  '기타업무':       {name:'기타 수임사건 관련 업무 대행',amt:40000},
+  // X. 상담
+  '상담개별':       {name:'개별 상담·자문',amt:150000},
+  '상담계속':       {name:'계속 상담·자문(월액)',amt:600000},
+  'custom':         null,
 };
 function onAddTypeChange() {
   const v = document.getElementById('addType').value === 'custom';
@@ -842,7 +913,7 @@ function renderItems() {
 function calcAll() {
   const tab = document.querySelector('.tc.active')?.id || '';
   let acq=0,agri=0,edu=0,exempt=0,regGov=0,stamp=0,bondBuy=0,bondDisc=0,certGov=0;
-  let base=0,addl=0,confirm=0,origin=0,trade=0,taxrpt=0,bondagt=0,permit=0,otherdeed=0,travelAmt=0,dailyAmt=0;
+  let base=0,addl=0,confirm=0,origin=0,trade=0,taxrpt=0,bondagt=0,permit=0,otherdeed=0,travelAmt=0,dailyAmt=0,lodgingAmt=0;
 
   if (tab === 'tab-re') {
     const regType = document.getElementById('regType').value;
@@ -923,6 +994,7 @@ function calcAll() {
     otherdeed= document.getElementById('chk_otherdeed').checked?40000  : 0;
     travelAmt= pN('travel');
     dailyAmt = parseInt(document.getElementById('daily').value)||0;
+    lodgingAmt = pN('lodging');
 
   } else if (tab === 'tab-com') {
     const type = document.getElementById('comType').value;
@@ -932,6 +1004,7 @@ function calcAll() {
     certGov   = pN('certFee_com');
     travelAmt = pN('travel_com');
     dailyAmt  = parseInt(document.getElementById('daily_com').value)||0;
+    lodgingAmt = pN('lodging_com');
 
   } else if (tab === 'tab-lit') {
     const type = document.getElementById('litType').value;
@@ -941,6 +1014,14 @@ function calcAll() {
     certGov   = pN('certFee_lit');
     travelAmt = pN('travel_lit');
     dailyAmt  = parseInt(document.getElementById('daily_lit').value)||0;
+    lodgingAmt = pN('lodging_lit');
+
+  } else if (tab === 'tab-bank') {
+    const type = document.getElementById('bankType').value;
+    const amt  = pN('bankAmt');
+    base = type ? calcBracket(BR_BANK, amt) : 0;
+    travelAmt  = pN('travel_bank');
+    dailyAmt   = parseInt(document.getElementById('daily_bank').value)||0;
   }
 
   // 가산보수
@@ -952,7 +1033,7 @@ function calcAll() {
   // 합계
   const govTotal = acq+agri+edu-exempt+regGov+stamp+bondBuy+certGov;
   const otherTotal = otherItems.reduce((s,i)=>s+i.amt,0);
-  const feeTotal = base+addl+confirm+origin+trade+taxrpt+bondagt+permit+otherdeed+travelAmt+dailyAmt+otherTotal;
+  const feeTotal = base+addl+confirm+origin+trade+taxrpt+bondagt+permit+otherdeed+travelAmt+dailyAmt+lodgingAmt+otherTotal;
   const vat = Math.round(feeTotal*0.1);
   const grand = govTotal+feeTotal+vat;
 
@@ -979,12 +1060,13 @@ function calcAll() {
   sv('R_otherdeed', otherdeed);
   sv('R_travel', travelAmt);
   sv('R_daily', dailyAmt);
+  sv('R_lodging', lodgingAmt);
   document.getElementById('R_feetotal').textContent = fmt(feeTotal);
   document.getElementById('R_vat').textContent = fmt(vat);
   document.getElementById('R_vattotal').textContent = fmt(vat);
   document.getElementById('R_grand').textContent = fmt(grand);
 
-  window._snap = {acq,agri,edu,exempt,regGov,stamp,bondBuy,bondDisc,certGov,govTotal,base,addl,confirm,origin,trade,taxrpt,bondagt,permit,otherdeed,travelAmt,dailyAmt,feeTotal,vat,grand};
+  window._snap = {acq,agri,edu,exempt,regGov,stamp,bondBuy,bondDisc,certGov,govTotal,base,addl,confirm,origin,trade,taxrpt,bondagt,permit,otherdeed,travelAmt,dailyAmt,lodgingAmt,feeTotal,vat,grand,otherItems:[...otherItems]};
 }
 
 // =====================================================
@@ -1005,7 +1087,10 @@ function pNd(v) { return parseInt(String(v).replace(/[^0-9]/g,''))||0; }
 function resetAll() {
   if (!confirm('모든 입력값을 초기화하겠습니까?')) return;
   ['caseName','clientName','clientPhone','propertyDesc','taxBase','mortAmt','pubPrice','comAmt','litAmt'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  ['stampTax','travel','regFee','certFee','travel_com','regFee_com','certFee_com','travel_lit','regFee_lit','certFee_lit'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0';});
+  ['stampTax','travel','regFee','certFee','lodging',
+   'travel_com','regFee_com','certFee_com','lodging_com',
+   'travel_lit','regFee_lit','certFee_lit','lodging_lit',
+   'travel_bank','bankAmt'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='0';});
   document.getElementById('bondDiscRate').value='12.84181';
   document.getElementById('addlFixed').value='0';
   document.getElementById('addlRate').value='0';
@@ -1015,8 +1100,9 @@ function resetAll() {
   document.getElementById('daily').value='0';
   document.getElementById('daily_com').value='0';
   document.getElementById('daily_lit').value='0';
-  ['chk_origin','chk_taxrpt','chk_bondagt'].forEach(id=>document.getElementById(id).checked=false);
-  ['chk_confirm','chk_trade','chk_permit','chk_otherdeed'].forEach(id=>document.getElementById(id).checked=false);
+  document.getElementById('daily_bank').value='0';
+  document.getElementById('bankType').value='';
+  ['chk_origin','chk_taxrpt','chk_bondagt','chk_confirm','chk_trade','chk_permit','chk_otherdeed'].forEach(id=>document.getElementById(id).checked=false);
   otherItems.length=0; renderItems(); onRegChange(); calcAll();
 }
 
@@ -1126,6 +1212,7 @@ ${d.exempt>0?`<tr><td style="color:#277040">취득세 감면</td><td class="r" s
 <tr><td>등본등제증명</td><td class="r">${d.certGov>0?d.certGov.toLocaleString()+'원':'–'}</td><td>기타업무대행</td><td class="r">${d.otherdeed>0?d.otherdeed.toLocaleString()+'원':'–'}</td></tr>
 <tr><td></td><td></td><td>교통비</td><td class="r">${d.travelAmt>0?d.travelAmt.toLocaleString()+'원':'–'}</td></tr>
 <tr><td></td><td></td><td>일당</td><td class="r">${d.dailyAmt>0?d.dailyAmt.toLocaleString()+'원':'–'}</td></tr>
+<tr><td></td><td></td><td>숙박비</td><td class="r">${d.lodgingAmt>0?d.lodgingAmt.toLocaleString()+'원':'–'}</td></tr>
 ${otherFeeRows}
 <tr class="sub"><td>공과금 소계 ①</td><td class="r">${(d.govTotal||0).toLocaleString()}원</td><td>보수액 소계 ②</td><td class="r">${(d.feeTotal||0).toLocaleString()}원</td></tr>
 </tbody></table>
